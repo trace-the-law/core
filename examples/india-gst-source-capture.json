@@ -1,0 +1,79 @@
+{
+  "schema_id": "https://schemas.trace-the-law.invalid/v1/capture.schema.json",
+  "schema_version": "1.0",
+  "capture_id": "urn:trace-the-law:capture:uuid:12121212-1212-4121-8121-121212121212",
+  "artifact_id": "urn:trace-the-law:artifact:sha256:6df796ca8d690225e62d7049df9006703d23be9641486d9f4587f565744cbaed",
+  "source_id": "urn:trace-the-law:source:uuid:33333333-3333-4333-8333-333333333333",
+  "source_status": "verified_official",
+  "representation": "document",
+  "acquisition": {
+    "entrypoint_id": "cgst-act-html",
+    "route": "entrypoint_exact"
+  },
+  "retrieval": {
+    "source_url": "https://cbic-gst.gov.in/hindi/CGST-bill-e.html",
+    "retrieved_at": "2026-08-23T12:20:06Z",
+    "http_status": 200,
+    "response_media_type": "text/html"
+  },
+  "rights": {
+    "publisher": "Central Board of Indirect Taxes and Customs, Department of Revenue, Ministry of Finance, Government of India",
+    "status": "unknown",
+    "evidence_retrieved_at": "2026-08-23T12:20:06Z",
+    "basis_evidence": [
+      {
+        "official_url": "https://taxinformation.cbic.gov.in/",
+        "retrieved_at": "2026-08-23T12:20:06Z",
+        "official_status": "verified_official"
+      }
+    ],
+    "permitted_uses": {
+      "capture": "review_required",
+      "public_mirroring": "unknown",
+      "transcription": "unknown",
+      "translation": "unknown",
+      "summarisation": "unknown",
+      "redistribution": "unknown"
+    },
+    "review_state": "unreviewed",
+    "next_review_trigger": "Complete India-adapter rights review before public corpus publication."
+  },
+  "publication_clearance": {
+    "status": "cleared",
+    "checks": {
+      "personal_data": "not_present",
+      "sealing_or_reporting_restrictions": "not_present",
+      "official_redactions_preserved": "not_applicable",
+      "sensitive_material": "not_present"
+    },
+    "review_state": "human_reviewed",
+    "reviewed_at": "2026-08-23T14:00:00Z",
+    "reviewer": {
+      "producer_id": "urn:trace-the-law:producer:human:fixture-publication-reviewer",
+      "producer_type": "human",
+      "name": "Example fixture publication reviewer"
+    },
+    "reviewed_target": {
+      "entity": {
+        "entity_type": "capture",
+        "entity_id": "urn:trace-the-law:capture:uuid:12121212-1212-4121-8121-121212121212"
+      },
+      "content_digest": {
+        "algorithm": "sha256",
+        "value": "6df796ca8d690225e62d7049df9006703d23be9641486d9f4587f565744cbaed"
+      },
+      "source_url": "https://cbic-gst.gov.in/hindi/CGST-bill-e.html"
+    },
+    "reviewed_clearance_digest": {
+      "algorithm": "sha256",
+      "value": "147cf26bdcbecc104fa2bf2b65852a71c7297cf195d8ab88b0435f273e0c0ef3"
+    }
+  },
+  "quality": {
+    "character_count": 469557,
+    "warnings": [
+      "reading_order_uncertain"
+    ]
+  },
+  "created_at": "2026-08-23T12:20:06Z"
+}

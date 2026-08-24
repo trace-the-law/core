@@ -1,0 +1,48 @@
+{
+  "schema_id": "https://schemas.trace-the-law.invalid/v1/derivation.schema.json",
+  "schema_version": "1.0",
+  "derivation_id": "urn:trace-the-law:derivation:uuid:17171717-1717-4171-8171-171717171717",
+  "output_artifact_id": "urn:trace-the-law:artifact:sha256:8d1751dbede747541a1d946a2348a7070c050793374aae4cdbbe01c561fe59bb",
+  "input_artifacts": [
+    {
+      "role": "source_document",
+      "artifact_id": "urn:trace-the-law:artifact:sha256:6df796ca8d690225e62d7049df9006703d23be9641486d9f4587f565744cbaed"
+    }
+  ],
+  "representation": "markdown_transcription",
+  "language": "en",
+  "tool": {
+    "name": "trace-the-law-example-extractor",
+    "version": "0.1.0",
+    "method": "Illustrative heading-only extraction; not a complete Act transcription."
+  },
+  "settings_digest": {
+    "algorithm": "sha256",
+    "value": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  },
+  "settings_artifact_id": "urn:trace-the-law:artifact:sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+  "reproducible": true,
+  "rights_basis_capture_ids": [
+    "urn:trace-the-law:capture:uuid:12121212-1212-4121-8121-121212121212"
+  ],
+  "publication_clearance": {
+    "status": "not_reviewed",
+    "checks": {
+      "personal_data": "unknown",
+      "sealing_or_reporting_restrictions": "unknown",
+      "official_redactions_preserved": "unknown",
+      "sensitive_material": "unknown"
+    },
+    "review_state": "unreviewed"
+  },
+  "quality": {
+    "character_count": 39,
+    "warnings": [
+      "possible_missing_pages",
+      "possible_missing_tables",
+      "possible_missing_footnotes",
+      "possible_missing_schedules"
+    ]
+  },
+  "created_at": "2026-08-23T13:20:00Z"
+}

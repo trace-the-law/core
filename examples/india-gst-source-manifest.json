@@ -1,0 +1,130 @@
+{
+  "schema_id": "https://schemas.trace-the-law.invalid/v1/source-manifest.schema.json",
+  "schema_version": "1.0",
+  "source_id": "urn:trace-the-law:source:uuid:33333333-3333-4333-8333-333333333333",
+  "identity_state": "reviewed",
+  "producer": {
+    "producer_id": "urn:trace-the-law:producer:importer:india-gst-source-adapter",
+    "producer_type": "importer",
+    "name": "india-gst-cbic-html-example",
+    "version": "0.1.0"
+  },
+  "identity_evidence": [
+    {
+      "artifact_id": "urn:trace-the-law:artifact:sha256:6df796ca8d690225e62d7049df9006703d23be9641486d9f4587f565744cbaed",
+      "capture_id": "urn:trace-the-law:capture:uuid:12121212-1212-4121-8121-121212121212",
+      "locator": {
+        "locator_type": "line_range",
+        "value": "45"
+      },
+      "quoted_text_digest": {
+        "algorithm": "sha256",
+        "value": "9f0db9869885a90f491bc398e828bbb84d0483d37d98a55901dcb19ce46883e8"
+      },
+      "content_verification": {
+        "method": "human_visual_match",
+        "verified_at": "2026-08-23T12:20:06Z",
+        "verifier": {
+          "producer_id": "urn:trace-the-law:producer:human:source-content-verifier",
+          "producer_type": "human",
+          "name": "Example source content verifier"
+        },
+        "verified_evidence_digest": {
+          "algorithm": "sha256",
+          "value": "965bb63ca1a6163df50c656fa8d46d3c74ac55fa0dea2038d800071da0562e2a"
+        }
+      }
+    }
+  ],
+  "identity_review": {
+    "status": "verified",
+    "checks": {
+      "homepage": "verified",
+      "entrypoints": "verified",
+      "authority_mapping": "verified",
+      "jurisdiction_mapping": "verified"
+    },
+    "reviewed_manifest_digest": {
+      "algorithm": "sha256",
+      "value": "c9e70366eef8e2156f3a6e069f0fd693c23a4d9ccb8d71f804ee656dbd3c4d3d"
+    },
+    "reviewed_at": "2026-08-23T14:00:00Z",
+    "reviewer": {
+      "producer_id": "urn:trace-the-law:producer:human:fixture-source-identity-reviewer",
+      "producer_type": "human",
+      "name": "Example source identity reviewer"
+    }
+  },
+  "name": "CBIC Central GST Act publication page (adapter-one illustration)",
+  "authority_ids": [
+    "urn:trace-the-law:authority:uuid:22222222-2222-4222-8222-222222222222"
+  ],
+  "jurisdiction_ids": [
+    "urn:trace-the-law:jurisdiction:uuid:11111111-1111-4111-8111-111111111111"
+  ],
+  "source_classes": [
+    "regulator"
+  ],
+  "document_kinds": [
+    "legislation"
+  ],
+  "languages": [
+    "en"
+  ],
+  "official_homepage": "https://cbic-gst.gov.in/",
+  "entrypoints": [
+    {
+      "entrypoint_id": "cgst-act-html",
+      "kind": "detail_page",
+      "url": "https://cbic-gst.gov.in/hindi/CGST-bill-e.html",
+      "enumeration_scope": "discovery_only",
+      "access": "public",
+      "languages": [
+        "en"
+      ],
+      "independent_group": "cbic-html"
+    }
+  ],
+  "expected_update_frequency": "irregular",
+  "identity_hints": [
+    "publisher_identifier",
+    "publication_date",
+    "title",
+    "language",
+    "content_digest"
+  ],
+  "rights": {
+    "publisher": "Central Board of Indirect Taxes and Customs, Department of Revenue, Ministry of Finance, Government of India",
+    "status": "unknown",
+    "evidence_retrieved_at": "2026-08-23T12:20:06Z",
+    "basis_evidence": [
+      {
+        "official_url": "https://taxinformation.cbic.gov.in/",
+        "retrieved_at": "2026-08-23T12:20:06Z",
+        "official_status": "verified_official"
+      }
+    ],
+    "permitted_uses": {
+      "capture": "review_required",
+      "public_mirroring": "unknown",
+      "transcription": "unknown",
+      "translation": "unknown",
+      "summarisation": "unknown",
+      "redistribution": "unknown"
+    },
+    "review_state": "unreviewed",
+    "next_review_trigger": "Complete India-adapter rights review before public corpus publication."
+  },
+  "adapter": {
+    "name": "india-gst-cbic-html-example",
+    "version": "0.1.0",
+    "enumeration_strategy": "manual_register",
+    "change_detection": [
+      "content_digest",
+      "periodic_refetch"
+    ]
+  },
+  "status": "active",
+  "created_at": "2026-08-23T12:20:06Z",
+  "updated_at": "2026-08-23T14:00:00Z"
+}

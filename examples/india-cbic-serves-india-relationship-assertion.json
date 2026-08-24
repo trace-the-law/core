@@ -1,0 +1,74 @@
+{
+  "schema_id": "https://schemas.trace-the-law.invalid/v1/relationship-assertion.schema.json",
+  "schema_version": "1.0",
+  "assertion_id": "urn:trace-the-law:assertion:uuid:13131313-1313-4131-8131-131313131313",
+  "subject": {
+    "entity_type": "authority",
+    "entity_id": "urn:trace-the-law:authority:uuid:22222222-2222-4222-8222-222222222222"
+  },
+  "predicate": "serves_jurisdiction",
+  "object": {
+    "entity_type": "jurisdiction",
+    "entity_id": "urn:trace-the-law:jurisdiction:uuid:11111111-1111-4111-8111-111111111111"
+  },
+  "interpretation_level": "structural_inference",
+  "scope": {
+    "extent": "whole_entity",
+    "jurisdiction_ids": [
+      "urn:trace-the-law:jurisdiction:uuid:11111111-1111-4111-8111-111111111111"
+    ]
+  },
+  "time_axes": {
+    "publication": {
+      "status": "unknown"
+    },
+    "effectiveness": {
+      "status": "unknown"
+    },
+    "applicability": {
+      "status": "not_applicable"
+    },
+    "observation": {
+      "status": "exact",
+      "value": "2026-08-23T12:20:06Z",
+      "precision": "second",
+      "calendar": "gregory"
+    }
+  },
+  "status": "candidate",
+  "confidence": "medium",
+  "evidence": [
+    {
+      "artifact_id": "urn:trace-the-law:artifact:sha256:6df796ca8d690225e62d7049df9006703d23be9641486d9f4587f565744cbaed",
+      "capture_id": "urn:trace-the-law:capture:uuid:12121212-1212-4121-8121-121212121212",
+      "locator": {
+        "locator_type": "line_range",
+        "value": "45"
+      },
+      "quoted_text_digest": {
+        "algorithm": "sha256",
+        "value": "9f0db9869885a90f491bc398e828bbb84d0483d37d98a55901dcb19ce46883e8"
+      },
+      "content_verification": {
+        "method": "human_visual_match",
+        "verified_at": "2026-08-23T12:20:06Z",
+        "verifier": {
+          "producer_id": "urn:trace-the-law:producer:human:source-content-verifier",
+          "producer_type": "human",
+          "name": "Example source content verifier"
+        },
+        "verified_evidence_digest": {
+          "algorithm": "sha256",
+          "value": "965bb63ca1a6163df50c656fa8d46d3c74ac55fa0dea2038d800071da0562e2a"
+        }
+      }
+    }
+  ],
+  "producer": {
+    "producer_type": "importer",
+    "name": "india-gst-example-importer",
+    "version": "0.1.0",
+    "method": "illustrative structural inference"
+  },
+  "created_at": "2026-08-23T12:20:06Z"
+}

@@ -1,0 +1,327 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.trace-the-law.invalid/v1/relationship-assertion.schema.json",
+  "title": "Trace the Law relationship assertion",
+  "description": "A typed, passage-cited, reviewable claim connecting public-authority entities.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_id",
+    "schema_version",
+    "assertion_id",
+    "subject",
+    "predicate",
+    "object",
+    "interpretation_level",
+    "scope",
+    "time_axes",
+    "status",
+    "confidence",
+    "evidence",
+    "producer",
+    "created_at"
+  ],
+  "properties": {
+    "schema_id": {
+      "const": "https://schemas.trace-the-law.invalid/v1/relationship-assertion.schema.json"
+    },
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/SchemaVersion"
+    },
+    "assertion_id": {
+      "$ref": "common.schema.json#/$defs/AssertionId"
+    },
+    "subject": {
+      "$ref": "common.schema.json#/$defs/EntityRef"
+    },
+    "predicate": {
+      "$ref": "#/$defs/Predicate"
+    },
+    "object": {
+      "$ref": "common.schema.json#/$defs/EntityRef"
+    },
+    "interpretation_level": {
+      "enum": ["explicit_source_text", "structural_inference", "legal_interpretation"]
+    },
+    "scope": {
+      "$ref": "#/$defs/AssertionScope"
+    },
+    "time_axes": {
+      "$ref": "common.schema.json#/$defs/TimeAxes"
+    },
+    "status": {
+      "enum": ["candidate", "verified", "disputed", "superseded", "retracted"]
+    },
+    "confidence": {
+      "enum": ["high", "medium", "low", "unknown"]
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/EvidenceCitation" }
+    },
+    "producer": {
+      "$ref": "common.schema.json#/$defs/Producer"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "reviewed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "reviewer": {
+      "$ref": "common.schema.json#/$defs/Producer"
+    },
+    "reviewed_assertion_digest": {
+      "description": "SHA-256 of the canonical complete assertion excluding only this digest field.",
+      "$ref": "common.schema.json#/$defs/ContentDigest"
+    },
+    "supersedes_assertion_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "common.schema.json#/$defs/AssertionId" }
+    },
+    "disputes_assertion_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "common.schema.json#/$defs/AssertionId" }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": { "enum": ["verified", "disputed", "superseded", "retracted"] }
+        },
+        "required": ["status"]
+      },
+      "then": {
+        "required": ["reviewed_at", "reviewer", "reviewed_assertion_digest"],
+        "properties": {
+          "producer": { "required": ["producer_id"] },
+          "reviewer": { "required": ["producer_id"] }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "predicate": {
+            "enum": ["institutionally_part_of", "reviews_decisions_of"]
+          }
+        },
+        "required": ["predicate"]
+      },
+      "then": {
+        "properties": {
+          "subject": {
+            "properties": { "entity_type": { "const": "authority" } }
+          },
+          "object": {
+            "properties": { "entity_type": { "const": "authority" } }
+          },
+          "interpretation_level": {
+            "enum": ["explicit_source_text", "structural_inference"]
+          },
+          "scope": {
+            "properties": { "extent": { "const": "whole_entity" } },
+            "not": { "required": ["target_provision_ids"] }
+          },
+          "time_axes": {
+            "properties": {
+              "applicability": {
+                "properties": { "status": { "const": "not_applicable" } }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "predicate": { "const": "serves_jurisdiction" } },
+        "required": ["predicate"]
+      },
+      "then": {
+        "properties": {
+          "subject": {
+            "properties": { "entity_type": { "const": "authority" } }
+          },
+          "object": {
+            "properties": { "entity_type": { "const": "jurisdiction" } }
+          },
+          "interpretation_level": {
+            "enum": ["explicit_source_text", "structural_inference"]
+          },
+          "scope": {
+            "properties": { "extent": { "const": "whole_entity" } },
+            "not": { "required": ["target_provision_ids"] }
+          },
+          "time_axes": {
+            "properties": {
+              "applicability": {
+                "properties": { "status": { "const": "not_applicable" } }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "predicate": {
+            "enum": [
+              "adopted_by",
+              "enacted_by",
+              "made_by",
+              "assented_by",
+              "issued_by",
+              "decided_by",
+              "published_by",
+              "administered_by",
+              "consolidated_by",
+              "translated_by",
+              "held_by_custodian"
+            ]
+          }
+        },
+        "required": ["predicate"]
+      },
+      "then": {
+        "properties": {
+          "subject": {
+            "properties": {
+              "entity_type": { "enum": ["record", "version"] }
+            }
+          },
+          "object": {
+            "properties": { "entity_type": { "const": "authority" } }
+          },
+          "interpretation_level": {
+            "enum": ["explicit_source_text", "structural_inference"]
+          },
+          "scope": {
+            "properties": { "extent": { "const": "whole_entity" } },
+            "not": { "required": ["target_provision_ids"] }
+          },
+          "time_axes": {
+            "properties": {
+              "applicability": {
+                "properties": { "status": { "const": "not_applicable" } }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "predicate": {
+            "enum": ["territorially_within", "territorially_overlaps"]
+          }
+        },
+        "required": ["predicate"]
+      },
+      "then": {
+        "properties": {
+          "subject": {
+            "properties": { "entity_type": { "const": "jurisdiction" } }
+          },
+          "object": {
+            "properties": { "entity_type": { "const": "jurisdiction" } }
+          },
+          "interpretation_level": {
+            "enum": ["explicit_source_text", "structural_inference"]
+          },
+          "scope": {
+            "properties": { "extent": { "const": "whole_entity" } },
+            "not": { "required": ["target_provision_ids"] }
+          },
+          "time_axes": {
+            "properties": {
+              "applicability": {
+                "properties": { "status": { "const": "not_applicable" } }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "Predicate": {
+      "enum": [
+        "amends",
+        "inserts",
+        "substitutes",
+        "renumbers",
+        "corrects",
+        "commences",
+        "extends",
+        "expires",
+        "repeals",
+        "revives",
+        "supersedes",
+        "implements",
+        "delegates_authority_to",
+        "adopted_by",
+        "enacted_by",
+        "made_by",
+        "assented_by",
+        "issued_by",
+        "decided_by",
+        "published_by",
+        "administered_by",
+        "consolidated_by",
+        "translated_by",
+        "held_by_custodian",
+        "institutionally_part_of",
+        "reviews_decisions_of",
+        "serves_jurisdiction",
+        "territorially_within",
+        "territorially_overlaps",
+        "interprets",
+        "applies",
+        "cites",
+        "stays",
+        "invalidates",
+        "overrules",
+        "distinguishes",
+        "limits"
+      ]
+    },
+    "AssertionScope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["extent", "jurisdiction_ids"],
+      "properties": {
+        "extent": {
+          "enum": ["whole_entity", "selected_provisions", "partial", "unknown"]
+        },
+        "jurisdiction_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "common.schema.json#/$defs/JurisdictionId" }
+        },
+        "target_provision_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "common.schema.json#/$defs/ProvisionId" }
+        },
+        "qualifier_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9._-]{1,63}$"
+          }
+        }
+      }
+    }
+  }
+}

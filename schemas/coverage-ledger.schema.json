@@ -1,0 +1,330 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.trace-the-law.invalid/v1/coverage-ledger.schema.json",
+  "title": "Trace the Law coverage ledger",
+  "description": "A dated claim about a declared source envelope, its enumeration evidence, failures, and explicit gaps. It never claims universal completeness.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_id",
+    "schema_version",
+    "coverage_id",
+    "source_id",
+    "declared_scope",
+    "status",
+    "enumeration_runs",
+    "known_gaps",
+    "generated_at",
+    "fresh_until"
+  ],
+  "properties": {
+    "schema_id": {
+      "const": "https://schemas.trace-the-law.invalid/v1/coverage-ledger.schema.json"
+    },
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/SchemaVersion"
+    },
+    "coverage_id": {
+      "$ref": "common.schema.json#/$defs/CoverageId"
+    },
+    "source_id": {
+      "$ref": "common.schema.json#/$defs/SourceId"
+    },
+    "declared_scope": {
+      "$ref": "#/$defs/CoverageScope"
+    },
+    "status": {
+      "enum": [
+        "unknown",
+        "enumerating",
+        "covered_for_declared_scope",
+        "known_gap",
+        "stale",
+        "degraded",
+        "blocked"
+      ]
+    },
+    "enumeration_runs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/EnumerationRun" }
+    },
+    "known_gaps": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/CoverageGap" }
+    },
+    "last_successful_enumeration_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "fresh_until": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "supersedes_coverage_id": {
+      "$ref": "common.schema.json#/$defs/CoverageId"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "status": { "const": "covered_for_declared_scope" } },
+        "required": ["status"]
+      },
+      "then": {
+        "required": ["last_successful_enumeration_at"],
+        "properties": {
+          "declared_scope": {
+            "properties": {
+              "date_interval": {
+                "properties": {
+                  "status": { "enum": ["known", "open_ended"] }
+                },
+                "required": ["status"]
+              }
+            }
+          },
+          "enumeration_runs": {
+            "contains": {
+              "properties": { "outcome": { "const": "success" } },
+              "required": ["outcome"]
+            },
+            "minContains": 1
+          },
+          "known_gaps": {
+            "items": {
+              "properties": { "state": { "const": "resolved" } },
+              "required": ["state"]
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "status": { "const": "known_gap" } },
+        "required": ["status"]
+      },
+      "then": {
+        "properties": {
+          "known_gaps": {
+            "contains": {
+              "properties": {
+                "state": { "enum": ["open", "investigating", "accepted_unresolved"] }
+              },
+              "required": ["state"]
+            },
+            "minContains": 1
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "CoverageScope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "jurisdiction_ids",
+        "authority_ids",
+        "document_kinds",
+        "languages",
+        "date_axis",
+        "date_interval",
+        "entrypoint_ids"
+      ],
+      "properties": {
+        "jurisdiction_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "common.schema.json#/$defs/JurisdictionId" }
+        },
+        "authority_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "common.schema.json#/$defs/AuthorityId" }
+        },
+        "document_kinds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "source-manifest.schema.json#/$defs/DocumentKind" }
+        },
+        "languages": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "common.schema.json#/$defs/LanguageTag" }
+        },
+        "date_axis": {
+          "enum": ["publication", "effectiveness", "applicability", "observation"]
+        },
+        "date_interval": {
+          "$ref": "common.schema.json#/$defs/TemporalInterval"
+        },
+        "entrypoint_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9._-]{1,63}$"
+          }
+        }
+      }
+    },
+    "EnumerationRun": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "run_id",
+        "entrypoint_id",
+        "independent_group",
+        "started_at",
+        "completed_at",
+        "outcome",
+        "discovered_count"
+      ],
+      "properties": {
+        "run_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._-]{1,80}$"
+        },
+        "entrypoint_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._-]{1,63}$"
+        },
+        "independent_group": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._-]{1,63}$"
+        },
+        "started_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "completed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "outcome": {
+          "enum": ["success", "partial", "failed", "blocked"]
+        },
+        "discovered_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "index_artifact_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "common.schema.json#/$defs/ArtifactId" }
+        },
+        "failure_code": {
+          "enum": [
+            "network_error",
+            "authentication_required",
+            "rate_limited",
+            "source_changed",
+            "parser_error",
+            "robots_or_terms_block",
+            "rights_block",
+            "unknown"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": { "enum": ["failed", "blocked"] }
+            },
+            "required": ["outcome"]
+          },
+          "then": { "required": ["failure_code"] },
+          "else": { "not": { "required": ["failure_code"] } }
+        }
+      ]
+    },
+    "CoverageGap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "gap_id",
+        "gap_type",
+        "state",
+        "affected_interval",
+        "first_detected_at",
+        "last_checked_at"
+      ],
+      "properties": {
+        "gap_id": {
+          "$ref": "common.schema.json#/$defs/GapId"
+        },
+        "gap_type": {
+          "enum": [
+            "missing_document",
+            "numbering_gap",
+            "date_gap",
+            "referenced_but_missing",
+            "inaccessible_source",
+            "adapter_failure",
+            "parser_failure",
+            "uncertain_identity",
+            "language_gap",
+            "rights_blocked",
+            "unclassified_gap"
+          ]
+        },
+        "state": {
+          "enum": ["open", "investigating", "resolved", "accepted_unresolved"]
+        },
+        "affected_interval": {
+          "$ref": "common.schema.json#/$defs/TemporalInterval"
+        },
+        "expected_identifiers": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "maxLength": 300
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/PublicSourceEvidence" }
+        },
+        "correction_report_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "common.schema.json#/$defs/ReportId" }
+        },
+        "first_detected_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "last_checked_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "resolved_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "state": { "const": "resolved" } },
+            "required": ["state"]
+          },
+          "then": { "required": ["resolved_at"] },
+          "else": { "not": { "required": ["resolved_at"] } }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,233 @@
+{
+  "schema_id": "https://schemas.trace-the-law.invalid/v1/jurisdiction.schema.json",
+  "schema_version": "1.0",
+  "jurisdiction_id": "urn:trace-the-law:jurisdiction:uuid:11111111-1111-4111-8111-111111111111",
+  "names": [
+    {
+      "text": "India",
+      "language": "en",
+      "name_type": "official_short",
+      "valid_during": {
+        "status": "unknown"
+      },
+      "status": "candidate",
+      "evidence": [
+        {
+          "artifact_id": "urn:trace-the-law:artifact:sha256:6df796ca8d690225e62d7049df9006703d23be9641486d9f4587f565744cbaed",
+          "capture_id": "urn:trace-the-law:capture:uuid:12121212-1212-4121-8121-121212121212",
+          "locator": {
+            "locator_type": "line_range",
+            "value": "405-409"
+          },
+          "quoted_text_digest": {
+            "algorithm": "sha256",
+            "value": "abd149214539d9f222d25de6358735b9fa0efd3956f66102b2c119ae2d9f6348"
+          },
+          "content_verification": {
+            "method": "human_visual_match",
+            "verified_at": "2026-08-23T12:20:06Z",
+            "verifier": {
+              "producer_id": "urn:trace-the-law:producer:human:source-content-verifier",
+              "producer_type": "human",
+              "name": "Example source content verifier"
+            },
+            "verified_evidence_digest": {
+              "algorithm": "sha256",
+              "value": "b24427c80c7eef0d1a6362aab366bcea1b94d1e594812c6ebc84a6260b9010fc"
+            }
+          }
+        }
+      ],
+      "field_bindings": [
+        {
+          "field": "text",
+          "source_value": "India",
+          "normalized_value": "India",
+          "evidence_indexes": [0],
+          "method": "source_exact",
+          "producer": {
+            "producer_id": "urn:trace-the-law:producer:importer:india-gst-example-importer",
+            "producer_type": "importer",
+            "name": "india-gst-example-importer"
+          },
+          "created_at": "2026-08-23T12:20:06Z"
+        },
+        {
+          "field": "language",
+          "source_value": "India",
+          "normalized_value": "en",
+          "evidence_indexes": [0],
+          "method": "human_reviewed",
+          "producer": {
+            "producer_id": "urn:trace-the-law:producer:importer:india-gst-example-importer",
+            "producer_type": "importer",
+            "name": "india-gst-example-importer"
+          },
+          "created_at": "2026-08-23T12:20:06Z",
+          "normalization_review": {
+            "reviewed_binding_digest": {
+              "algorithm": "sha256",
+              "value": "d0381e6c3c262e4a3417d8a0b27a63f965fd18d5a88277a2596a165aa0fd12aa"
+            },
+            "reviewed_at": "2026-08-23T12:20:06Z",
+            "reviewer": {
+              "producer_id": "urn:trace-the-law:producer:human:profile-normalization-reviewer",
+              "producer_type": "human",
+              "name": "Example global profile normalization reviewer"
+            }
+          }
+        },
+        {
+          "field": "name_type",
+          "source_value": "India",
+          "normalized_value": "official_short",
+          "evidence_indexes": [0],
+          "method": "human_reviewed",
+          "producer": {
+            "producer_id": "urn:trace-the-law:producer:importer:india-gst-example-importer",
+            "producer_type": "importer",
+            "name": "india-gst-example-importer"
+          },
+          "created_at": "2026-08-23T12:20:06Z",
+          "normalization_review": {
+            "reviewed_binding_digest": {
+              "algorithm": "sha256",
+              "value": "e33b9062926ef5715a9508bb234583a811c91585ec1af8724a6a434cc2e01a0f"
+            },
+            "reviewed_at": "2026-08-23T12:20:06Z",
+            "reviewer": {
+              "producer_id": "urn:trace-the-law:producer:human:profile-normalization-reviewer",
+              "producer_type": "human",
+              "name": "Example global profile normalization reviewer"
+            }
+          }
+        },
+        {
+          "field": "valid_during",
+          "source_value": "India",
+          "normalized_value": {
+            "status": "unknown"
+          },
+          "evidence_indexes": [0],
+          "method": "human_reviewed",
+          "producer": {
+            "producer_id": "urn:trace-the-law:producer:importer:india-gst-example-importer",
+            "producer_type": "importer",
+            "name": "india-gst-example-importer"
+          },
+          "created_at": "2026-08-23T12:20:06Z",
+          "normalization_review": {
+            "reviewed_binding_digest": {
+              "algorithm": "sha256",
+              "value": "6ec684ae9176008f63c16b16997d3d7af71eb29e56127c36a824dc68ec446380"
+            },
+            "reviewed_at": "2026-08-23T12:20:06Z",
+            "reviewer": {
+              "producer_id": "urn:trace-the-law:producer:human:profile-normalization-reviewer",
+              "producer_type": "human",
+              "name": "Example global profile normalization reviewer"
+            }
+          }
+        }
+      ],
+      "producer": {
+        "producer_type": "importer",
+        "name": "india-gst-example-importer",
+        "version": "0.1.0",
+        "method": "illustrative identity extraction"
+      },
+      "created_at": "2026-08-23T12:20:06Z"
+    }
+  ],
+  "jurisdiction_kind": "sovereign_state",
+  "territorial_relationships": [],
+  "lifecycle_status": "active",
+  "profile_evidence": [
+    {
+      "artifact_id": "urn:trace-the-law:artifact:sha256:6df796ca8d690225e62d7049df9006703d23be9641486d9f4587f565744cbaed",
+      "capture_id": "urn:trace-the-law:capture:uuid:12121212-1212-4121-8121-121212121212",
+      "locator": {
+        "locator_type": "line_range",
+        "value": "405-409"
+      },
+      "quoted_text_digest": {
+        "algorithm": "sha256",
+        "value": "abd149214539d9f222d25de6358735b9fa0efd3956f66102b2c119ae2d9f6348"
+      },
+      "content_verification": {
+        "method": "human_visual_match",
+        "verified_at": "2026-08-23T12:20:06Z",
+        "verifier": {
+          "producer_id": "urn:trace-the-law:producer:human:source-content-verifier",
+          "producer_type": "human",
+          "name": "Example source content verifier"
+        },
+        "verified_evidence_digest": {
+          "algorithm": "sha256",
+          "value": "b24427c80c7eef0d1a6362aab366bcea1b94d1e594812c6ebc84a6260b9010fc"
+        }
+      }
+    }
+  ],
+  "profile_bindings": [
+    {
+      "field": "jurisdiction_kind",
+      "source_value": "India",
+      "normalized_value": "sovereign_state",
+      "evidence_indexes": [0],
+      "method": "human_reviewed",
+      "producer": {
+        "producer_id": "urn:trace-the-law:producer:importer:india-gst-example-importer",
+        "producer_type": "importer",
+        "name": "india-gst-example-importer"
+      },
+      "created_at": "2026-08-23T12:20:06Z",
+      "normalization_review": {
+        "reviewed_binding_digest": {
+          "algorithm": "sha256",
+          "value": "c20ca183f4c66ed47d5d29c87eb9557514797de570078cca03773a5a071882c4"
+        },
+        "reviewed_at": "2026-08-23T12:20:06Z",
+        "reviewer": {
+          "producer_id": "urn:trace-the-law:producer:human:profile-normalization-reviewer",
+          "producer_type": "human",
+          "name": "Example global profile normalization reviewer"
+        }
+      }
+    },
+    {
+      "field": "lifecycle_status",
+      "source_value": "India",
+      "normalized_value": "active",
+      "evidence_indexes": [0],
+      "method": "human_reviewed",
+      "producer": {
+        "producer_id": "urn:trace-the-law:producer:importer:india-gst-example-importer",
+        "producer_type": "importer",
+        "name": "india-gst-example-importer"
+      },
+      "created_at": "2026-08-23T12:20:06Z",
+      "normalization_review": {
+        "reviewed_binding_digest": {
+          "algorithm": "sha256",
+          "value": "b606b42d7d0365864844651bf84aecd29e044c7a0fbf3ebe14d21c5e0ed3e1c9"
+        },
+        "reviewed_at": "2026-08-23T12:20:06Z",
+        "reviewer": {
+          "producer_id": "urn:trace-the-law:producer:human:profile-normalization-reviewer",
+          "producer_type": "human",
+          "name": "Example global profile normalization reviewer"
+        }
+      }
+    }
+  ],
+  "profile_review_state": "candidate",
+  "producer": {
+    "producer_type": "importer",
+    "name": "india-gst-example-importer",
+    "version": "0.1.0",
+    "method": "illustrative jurisdiction profile extraction"
+  },
+  "created_at": "2026-08-23T12:20:06Z",
+  "updated_at": "2026-08-23T12:20:06Z"
+}

@@ -1,0 +1,807 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.trace-the-law.invalid/v1/record.schema.json",
+  "title": "Trace the Law record",
+  "description": "A stable public-authority record identity with version-specific artifacts and provision snapshots.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_id",
+    "schema_version",
+    "record_id",
+    "record_kind",
+    "canonical_title",
+    "jurisdiction_ids",
+    "jurisdiction_bindings",
+    "authority_relationships",
+    "identifiers",
+    "metadata_evidence",
+    "metadata_bindings",
+    "versions",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "schema_id": {
+      "const": "https://schemas.trace-the-law.invalid/v1/record.schema.json"
+    },
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/SchemaVersion"
+    },
+    "record_id": {
+      "$ref": "common.schema.json#/$defs/RecordId"
+    },
+    "record_kind": {
+      "$ref": "source-manifest.schema.json#/$defs/DocumentKind"
+    },
+    "canonical_title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "jurisdiction_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "common.schema.json#/$defs/JurisdictionId" }
+    },
+    "jurisdiction_bindings": {
+      "description": "Independently reviewed mappings from each declared legal jurisdiction to exact official-source evidence used by this record.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/JurisdictionBinding" }
+    },
+    "authority_relationships": {
+      "description": "Assertion-backed authority roles associated with this record. An empty array means the roles are not yet modelled, never that no authority exists.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/AuthorityRelationshipRef" }
+    },
+    "identifiers": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/ExternalIdentifier" }
+    },
+    "metadata_evidence": {
+      "description": "Immutable source passages supporting the record title, kind, and external identifiers.",
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/EvidenceCitation" }
+    },
+    "metadata_bindings": {
+      "description": "Field-to-citation bindings. The semantic validator requires title, kind, and every identifier to be covered.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/MetadataBinding" }
+    },
+    "versions": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/RecordVersion" }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "$defs": {
+    "JurisdictionBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "jurisdiction_id",
+        "evidence_indexes",
+        "producer",
+        "created_at",
+        "normalization_review"
+      ],
+      "properties": {
+        "jurisdiction_id": { "$ref": "common.schema.json#/$defs/JurisdictionId" },
+        "evidence_indexes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "integer", "minimum": 0 }
+        },
+        "producer": {
+          "allOf": [
+            { "$ref": "common.schema.json#/$defs/Producer" },
+            { "required": ["producer_id"] }
+          ]
+        },
+        "created_at": { "type": "string", "format": "date-time" },
+        "normalization_review": { "$ref": "#/$defs/MetadataNormalizationReview" }
+      }
+    },
+    "MetadataBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["field", "evidence_indexes"],
+      "properties": {
+        "field": {
+          "enum": ["canonical_title", "record_kind", "identifier"]
+        },
+        "identifier_index": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "evidence_indexes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "integer", "minimum": 0 }
+        },
+        "source_value": {
+          "description": "Exact public-source term that supports a normalized controlled value such as record_kind.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "normalized_value": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "normalization_method": {
+          "description": "Record-kind classifications are globally context-sensitive and therefore require an identified human review in v1.",
+          "const": "human_reviewed"
+        },
+        "producer": {
+          "$ref": "common.schema.json#/$defs/Producer"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "normalization_review": {
+          "$ref": "#/$defs/MetadataNormalizationReview"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "field": { "const": "identifier" } },
+            "required": ["field"]
+          },
+          "then": { "required": ["identifier_index"] },
+          "else": { "not": { "required": ["identifier_index"] } }
+        },
+        {
+          "required": [
+            "source_value",
+            "normalized_value",
+            "normalization_method",
+            "producer",
+            "created_at",
+            "normalization_review"
+          ],
+          "properties": {
+            "producer": { "required": ["producer_id"] }
+          }
+        }
+      ]
+    },
+    "MetadataNormalizationReview": {
+      "type": "object",
+      "description": "Independent human approval bound to the exact source-to-controlled-value mapping and review identity.",
+      "additionalProperties": false,
+      "required": ["reviewed_binding_digest", "reviewed_at", "reviewer"],
+      "properties": {
+        "reviewed_binding_digest": {
+          "description": "SHA-256 of the canonical metadata binding excluding only this digest field.",
+          "$ref": "common.schema.json#/$defs/ContentDigest"
+        },
+        "reviewed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "reviewer": {
+          "$ref": "common.schema.json#/$defs/Producer"
+        }
+      },
+      "allOf": [
+        {
+          "properties": {
+            "reviewer": {
+              "required": ["producer_id"],
+              "properties": { "producer_type": { "const": "human" } }
+            }
+          }
+        }
+      ]
+    },
+    "AuthorityRelationshipRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority_id", "role", "assertion_id"],
+      "properties": {
+        "authority_id": {
+          "$ref": "common.schema.json#/$defs/AuthorityId"
+        },
+        "role": {
+          "enum": [
+            "adopting",
+            "enacting",
+            "making",
+            "assenting",
+            "issuing",
+            "deciding",
+            "publishing",
+            "administering",
+            "consolidating",
+            "translating",
+            "custodian"
+          ]
+        },
+        "assertion_id": {
+          "$ref": "common.schema.json#/$defs/AssertionId"
+        }
+      }
+    },
+    "RecordVersion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version_id",
+        "version_kind",
+        "language",
+        "artifact_ids",
+        "metadata_evidence",
+        "metadata_bindings",
+        "time_axes",
+        "publication_state",
+        "provisions"
+      ],
+      "properties": {
+        "version_id": {
+          "$ref": "common.schema.json#/$defs/VersionId"
+        },
+        "version_kind": {
+          "enum": [
+            "issued",
+            "corrected",
+            "republished",
+            "official_consolidation",
+            "unofficial_consolidation",
+            "official_translation",
+            "unofficial_translation"
+          ]
+        },
+        "language": {
+          "$ref": "common.schema.json#/$defs/LanguageTag"
+        },
+        "artifact_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "common.schema.json#/$defs/ArtifactId" }
+        },
+        "metadata_evidence": {
+          "description": "Immutable citations from this version's artifacts supporting version kind, language, and publisher state.",
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "common.schema.json#/$defs/EvidenceCitation" }
+        },
+        "metadata_bindings": {
+          "description": "Exact source-span bindings for every material version metadata field.",
+          "type": "array",
+          "minItems": 3,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/VersionMetadataBinding" }
+        },
+        "authority_relationships": {
+          "description": "Version-specific authority roles. Official translations require a reviewed issuing relationship for this exact version.",
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/AuthorityRelationshipRef" }
+        },
+        "time_axes": {
+          "$ref": "#/$defs/RecordTimeAxes"
+        },
+        "publication_state": {
+          "description": "Publisher state only. Legal force is derived from cited assertions and time axes.",
+          "enum": ["draft", "issued", "corrected", "withdrawn", "unknown"]
+        },
+        "citation": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "publication_evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "allOf": [
+              { "$ref": "common.schema.json#/$defs/EvidenceCitation" },
+              {
+                "required": ["temporal_value_binding"],
+                "anyOf": [
+                  { "required": ["quoted_text"] },
+                  { "required": ["quoted_text_digest"] }
+                ]
+              }
+            ]
+          }
+        },
+        "supersedes_version_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "common.schema.json#/$defs/VersionId" }
+        },
+        "derived_from_assertion_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "common.schema.json#/$defs/AssertionId" }
+        },
+        "provisions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ProvisionVersion" }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "time_axes": {
+                "properties": {
+                  "publication": {
+                    "properties": {
+                      "status": { "enum": ["exact", "approximate"] }
+                    },
+                    "required": ["status"]
+                  }
+                }
+              }
+            },
+            "required": ["time_axes"]
+          },
+          "then": {
+            "required": ["publication_evidence"],
+            "properties": {
+              "time_axes": {
+                "properties": {
+                  "publication": { "required": ["verbatim_value"] }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "supersedes_version_ids": { "minItems": 1 } },
+            "required": ["supersedes_version_ids"]
+          },
+          "then": {
+            "required": [
+              "supersedes_version_ids",
+              "derived_from_assertion_ids"
+            ],
+            "properties": {
+              "supersedes_version_ids": { "minItems": 1 },
+              "derived_from_assertion_ids": { "minItems": 1 }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "version_kind": {
+                "const": "unofficial_consolidation"
+              }
+            },
+            "required": ["version_kind"]
+          },
+          "then": {
+            "required": ["derived_from_assertion_ids"],
+            "properties": {
+              "derived_from_assertion_ids": { "minItems": 1 }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "version_kind": { "const": "official_translation" } },
+            "required": ["version_kind"]
+          },
+          "then": {
+            "required": ["authority_relationships"],
+            "properties": {
+              "authority_relationships": {
+                "minItems": 1,
+                "contains": {
+                  "type": "object",
+                  "properties": { "role": { "const": "issuing" } },
+                  "required": ["role"]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "VersionMetadataBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "field",
+        "source_value",
+        "normalized_value",
+        "evidence_indexes",
+        "method",
+        "producer",
+        "created_at"
+      ],
+      "properties": {
+        "field": {
+          "enum": ["version_kind", "language", "publication_state"]
+        },
+        "source_value": {
+          "description": "Exact source-language span on which the controlled version metadata value is based.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "normalized_value": {},
+        "evidence_indexes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "integer", "minimum": 0 }
+        },
+        "method": { "enum": ["source_exact", "human_reviewed"] },
+        "producer": { "$ref": "common.schema.json#/$defs/Producer" },
+        "created_at": { "type": "string", "format": "date-time" },
+        "normalization_review": {
+          "$ref": "#/$defs/MetadataNormalizationReview"
+        }
+      },
+      "allOf": [
+        {
+          "properties": { "producer": { "required": ["producer_id"] } }
+        },
+        {
+          "if": {
+            "properties": { "field": { "const": "version_kind" } },
+            "required": ["field"]
+          },
+          "then": {
+            "properties": {
+              "normalized_value": {
+                "enum": [
+                  "issued",
+                  "corrected",
+                  "republished",
+                  "official_consolidation",
+                  "unofficial_consolidation",
+                  "official_translation",
+                  "unofficial_translation"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "field": { "const": "language" } },
+            "required": ["field"]
+          },
+          "then": {
+            "properties": {
+              "normalized_value": {
+                "$ref": "common.schema.json#/$defs/LanguageTag"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "field": { "const": "publication_state" } },
+            "required": ["field"]
+          },
+          "then": {
+            "properties": {
+              "normalized_value": {
+                "enum": ["draft", "issued", "corrected", "withdrawn", "unknown"]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "method": { "const": "source_exact" } },
+            "required": ["method"]
+          },
+          "then": { "not": { "required": ["normalization_review"] } },
+          "else": { "required": ["normalization_review"] }
+        }
+      ]
+    },
+    "ProvisionVersion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "provision_id",
+        "provision_version_id",
+        "designation",
+        "metadata_bindings",
+        "text_citations",
+        "text_completeness",
+        "content_digest",
+        "digest_scope",
+        "time_axes"
+      ],
+      "properties": {
+        "provision_id": {
+          "description": "Stable identity for the provision concept across versions and renumbering.",
+          "$ref": "common.schema.json#/$defs/ProvisionId"
+        },
+        "provision_version_id": {
+          "description": "Identity for this exact textual and temporal state.",
+          "$ref": "common.schema.json#/$defs/ProvisionVersionId"
+        },
+        "parent_provision_id": {
+          "$ref": "common.schema.json#/$defs/ProvisionId"
+        },
+        "designation": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "heading": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "order": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "metadata_bindings": {
+          "description": "Source-to-value bindings for designation and any heading. Normalized designations require independent review; exact headings may use source_exact.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/ProvisionMetadataBinding" }
+        },
+        "text_citations": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "common.schema.json#/$defs/EvidenceCitation" }
+        },
+        "publication_evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "allOf": [
+              { "$ref": "common.schema.json#/$defs/EvidenceCitation" },
+              {
+                "required": ["temporal_value_binding"],
+                "anyOf": [
+                  { "required": ["quoted_text"] },
+                  { "required": ["quoted_text_digest"] }
+                ]
+              }
+            ]
+          }
+        },
+        "text_completeness": {
+          "description": "Whether the cited and digested bytes cover the whole designated provision. Partial never masquerades as a complete provision text.",
+          "enum": ["complete", "partial"]
+        },
+        "content_digest": {
+          "$ref": "common.schema.json#/$defs/ContentDigest"
+        },
+        "content_artifact_id": {
+          "description": "A dedicated artifact containing the complete provision text when text_completeness is complete.",
+          "$ref": "common.schema.json#/$defs/ArtifactId"
+        },
+        "digest_scope": {
+          "$ref": "#/$defs/ProvisionDigestScope"
+        },
+        "time_axes": {
+          "$ref": "#/$defs/RecordTimeAxes"
+        },
+        "predecessor_provision_version_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "common.schema.json#/$defs/ProvisionVersionId" }
+        },
+        "derived_from_assertion_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "common.schema.json#/$defs/AssertionId" }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "time_axes": {
+                "properties": {
+                  "publication": {
+                    "properties": {
+                      "status": { "enum": ["exact", "approximate"] }
+                    },
+                    "required": ["status"]
+                  }
+                }
+              }
+            },
+            "required": ["time_axes"]
+          },
+          "then": {
+            "required": ["publication_evidence"],
+            "properties": {
+              "time_axes": {
+                "properties": {
+                  "publication": { "required": ["verbatim_value"] }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "predecessor_provision_version_ids": { "minItems": 1 }
+            },
+            "required": ["predecessor_provision_version_ids"]
+          },
+          "then": {
+            "required": ["derived_from_assertion_ids"],
+            "properties": {
+              "derived_from_assertion_ids": { "minItems": 1 }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "text_completeness": { "const": "complete" } },
+            "required": ["text_completeness"]
+          },
+          "then": {
+            "required": ["content_artifact_id"],
+            "properties": {
+              "digest_scope": {
+                "properties": {
+                  "covered_content": { "const": "complete_provision_text" }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "text_completeness": { "const": "partial" } },
+            "required": ["text_completeness"]
+          },
+          "then": {
+            "properties": {
+              "digest_scope": {
+                "properties": {
+                  "covered_content": { "const": "single_citation_text" }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ProvisionMetadataBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "field",
+        "source_value",
+        "normalized_value",
+        "evidence_indexes",
+        "method",
+        "producer",
+        "created_at"
+      ],
+      "properties": {
+        "field": { "enum": ["designation", "heading"] },
+        "source_value": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "normalized_value": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "evidence_indexes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "integer", "minimum": 0 }
+        },
+        "method": { "enum": ["source_exact", "human_reviewed"] },
+        "producer": { "$ref": "common.schema.json#/$defs/Producer" },
+        "created_at": { "type": "string", "format": "date-time" },
+        "normalization_review": {
+          "$ref": "#/$defs/MetadataNormalizationReview"
+        }
+      },
+      "allOf": [
+        {
+          "properties": { "producer": { "required": ["producer_id"] } }
+        },
+        {
+          "if": {
+            "properties": { "method": { "const": "source_exact" } },
+            "required": ["method"]
+          },
+          "then": { "not": { "required": ["normalization_review"] } },
+          "else": { "required": ["normalization_review"] }
+        }
+      ]
+    },
+    "ProvisionDigestScope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["covered_content", "canonicalization"],
+      "properties": {
+        "covered_content": {
+          "enum": [
+            "complete_provision_text",
+            "single_citation_text"
+          ]
+        },
+        "citation_indexes": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "integer", "minimum": 0 }
+        },
+        "canonicalization": {
+          "enum": ["utf8_exact", "unicode_nfc_lf"]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "covered_content": { "const": "single_citation_text" }
+            },
+            "required": ["covered_content"]
+          },
+          "then": { "required": ["citation_indexes"] },
+          "else": { "not": { "required": ["citation_indexes"] } }
+        }
+      ]
+    },
+    "LegalStatusInterval": {
+      "allOf": [
+        { "$ref": "common.schema.json#/$defs/TemporalInterval" },
+        {
+          "if": {
+            "properties": { "status": { "enum": ["known", "open_ended"] } },
+            "required": ["status"]
+          },
+          "then": {
+            "required": ["basis_assertion_ids"],
+            "properties": { "basis_assertion_ids": { "minItems": 1 } }
+          }
+        }
+      ]
+    },
+    "RecordTimeAxes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["publication", "effectiveness", "applicability", "observation"],
+      "properties": {
+        "publication": { "$ref": "common.schema.json#/$defs/TemporalPoint" },
+        "effectiveness": { "$ref": "#/$defs/LegalStatusInterval" },
+        "applicability": { "$ref": "#/$defs/LegalStatusInterval" },
+        "observation": { "$ref": "common.schema.json#/$defs/TemporalPoint" }
+      }
+    }
+  }
+}

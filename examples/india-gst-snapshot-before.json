@@ -1,0 +1,181 @@
+{
+  "schema_id": "https://schemas.trace-the-law.invalid/v1/snapshot.schema.json",
+  "schema_version": "1.0",
+  "snapshot_id": "urn:trace-the-law:snapshot:sha256:ede674af26fe71378503cd7b244487bf434583c2186ad69b52df96865b9ebbf1",
+  "hash_contract": {
+    "algorithm": "sha256",
+    "canonicalization": "rfc8785",
+    "projection": "root_object_excluding_only_snapshot_id"
+  },
+  "components": [
+    {
+      "component_id": "urn:trace-the-law:component:uuid:14141414-1414-4141-8141-141414141414",
+      "component_kind": "global_core",
+      "revision": {
+        "revision_type": "content_digest",
+        "value": "94f694ee9b2f50ea74ebabe60e8796bb63535a52891d9d0b19de009f255068bf"
+      },
+      "root_digest": {
+        "algorithm": "sha256",
+        "value": "94f694ee9b2f50ea74ebabe60e8796bb63535a52891d9d0b19de009f255068bf"
+      }
+    },
+    {
+      "component_id": "urn:trace-the-law:component:uuid:15151515-1515-4151-8151-151515151515",
+      "component_kind": "global_registry",
+      "revision": {
+        "revision_type": "content_digest",
+        "value": "93dbc6399aae169652fe8aca9253c8036aa1e4650573187bcb052d6093787112"
+      },
+      "root_digest": {
+        "algorithm": "sha256",
+        "value": "93dbc6399aae169652fe8aca9253c8036aa1e4650573187bcb052d6093787112"
+      },
+      "jurisdiction_ids": [
+        "urn:trace-the-law:jurisdiction:uuid:11111111-1111-4111-8111-111111111111"
+      ],
+      "authority_ids": [
+        "urn:trace-the-law:authority:uuid:22222222-2222-4222-8222-222222222222"
+      ]
+    },
+    {
+      "component_id": "urn:trace-the-law:component:uuid:16161616-1616-4161-8161-161616161616",
+      "component_kind": "corpus",
+      "revision": {
+        "revision_type": "content_digest",
+        "value": "ce9c4e1acd1a69e155dcc5414c253250fb1d88450efcd614856aec83c5ecf9c0"
+      },
+      "root_digest": {
+        "algorithm": "sha256",
+        "value": "ce9c4e1acd1a69e155dcc5414c253250fb1d88450efcd614856aec83c5ecf9c0"
+      },
+      "jurisdiction_ids": [
+        "urn:trace-the-law:jurisdiction:uuid:11111111-1111-4111-8111-111111111111"
+      ],
+      "authority_ids": [
+        "urn:trace-the-law:authority:uuid:22222222-2222-4222-8222-222222222222"
+      ]
+    }
+  ],
+  "schema_catalog": [
+    {
+      "schema_id": "https://schemas.trace-the-law.invalid/v1/artifact.schema.json",
+      "schema_version": "1.0",
+      "content_digest": {
+        "algorithm": "sha256",
+        "value": "ccf1e2e186d552c7162d1d4a839ba39c8a64191363a787283c9a91a034c12e97"
+      }
+    },
+    {
+      "schema_id": "https://schemas.trace-the-law.invalid/v1/authority.schema.json",
+      "schema_version": "1.0",
+      "content_digest": {
+        "algorithm": "sha256",
+        "value": "e6f81edc8ea24ef218a6c8766690b3374b324bc3b1dedd02b7f61d4b170eeca1"
+      }
+    },
+    {
+      "schema_id": "https://schemas.trace-the-law.invalid/v1/capture.schema.json",
+      "schema_version": "1.0",
+      "content_digest": {
+        "algorithm": "sha256",
+        "value": "deeaae08f099f45d142271844307df94798535d38f8f7bda4e251fc2fd88758f"
+      }
+    },
+    {
+      "schema_id": "https://schemas.trace-the-law.invalid/v1/common.schema.json",
+      "schema_version": "1.0",
+      "content_digest": {
+        "algorithm": "sha256",
+        "value": "716c3728d1d01e7947679eb039974da20e75751af475c5c25577164751bf72b8"
+      }
+    },
+    {
+      "schema_id": "https://schemas.trace-the-law.invalid/v1/correction-report.schema.json",
+      "schema_version": "1.0",
+      "content_digest": {
+        "algorithm": "sha256",
+        "value": "b83f4dd413f7cb25ffb2cc13f4d4eabd592038dac102f4bc2665464eb8e06069"
+      }
+    },
+    {
+      "schema_id": "https://schemas.trace-the-law.invalid/v1/coverage-ledger.schema.json",
+      "schema_version": "1.0",
+      "content_digest": {
+        "algorithm": "sha256",
+        "value": "9ed0e24d8799af7a573915c2b60be4b50a2aa7066fca8c11788e127f21f5766f"
+      }
+    },
+    {
+      "schema_id": "https://schemas.trace-the-law.invalid/v1/derivation.schema.json",
+      "schema_version": "1.0",
+      "content_digest": {
+        "algorithm": "sha256",
+        "value": "ce49c08ea7a58486e0062cd303d9c666c09a56f5de38ad5a891238997750f576"
+      }
+    },
+    {
+      "schema_id": "https://schemas.trace-the-law.invalid/v1/evidence-bundle.schema.json",
+      "schema_version": "1.0",
+      "content_digest": {
+        "algorithm": "sha256",
+        "value": "6496ae77803c3d0d2a4f6b51f6611a325b38ef86dfbec70f3a79f4d9b191ccb1"
+      }
+    },
+    {
+      "schema_id": "https://schemas.trace-the-law.invalid/v1/invalidation-event.schema.json",
+      "schema_version": "1.0",
+      "content_digest": {
+        "algorithm": "sha256",
+        "value": "83736378c362782be8d92e165d781b999320fe2e2ba6f4e82210b7478b9fd127"
+      }
+    },
+    {
+      "schema_id": "https://schemas.trace-the-law.invalid/v1/jurisdiction.schema.json",
+      "schema_version": "1.0",
+      "content_digest": {
+        "algorithm": "sha256",
+        "value": "11e4595b9606ac85d970f058e38c0a32bfbd99115accd7a513a6877c5fbe7cf8"
+      }
+    },
+    {
+      "schema_id": "https://schemas.trace-the-law.invalid/v1/record.schema.json",
+      "schema_version": "1.0",
+      "content_digest": {
+        "algorithm": "sha256",
+        "value": "d0bc730c7777cec2213067de7131bff61892310356556ecb6e01291dbc553cae"
+      }
+    },
+    {
+      "schema_id": "https://schemas.trace-the-law.invalid/v1/relationship-assertion.schema.json",
+      "schema_version": "1.0",
+      "content_digest": {
+        "algorithm": "sha256",
+        "value": "3fb530ef7efe58f9013228885bffb9a1a11d07acd7218049b48c9d7087d0bf44"
+      }
+    },
+    {
+      "schema_id": "https://schemas.trace-the-law.invalid/v1/snapshot.schema.json",
+      "schema_version": "1.0",
+      "content_digest": {
+        "algorithm": "sha256",
+        "value": "a0b7973e1f5a95369cacd1cdb3c10bb43f6cdd2014baafa2193f16fc3e00c52d"
+      }
+    },
+    {
+      "schema_id": "https://schemas.trace-the-law.invalid/v1/source-manifest.schema.json",
+      "schema_version": "1.0",
+      "content_digest": {
+        "algorithm": "sha256",
+        "value": "dad42b551a75908dd651e3d0080dde6b41380fa9c2f05678cfbbe4598ea7ad58"
+      }
+    }
+  ],
+  "generated_at": "2026-08-23T14:00:30Z",
+  "producer": {
+    "producer_type": "importer",
+    "name": "trace-the-law-example-snapshot-builder",
+    "version": "0.1.0",
+    "method": "RFC 8785 composite snapshot fixture"
+  }
+}

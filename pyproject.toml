@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "trace-the-law"
+version = "0.1.0"
+description = "Schemas and validation for source-linked, versioned public-law evidence"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Trace the Law contributors" }]
+dependencies = [
+  "jsonschema>=4.19,<5",
+  "PyYAML>=6,<7",
+]
+
+[project.scripts]
+ttl-validate = "trace_the_law.validate:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.data-files]
+"share/trace-the-law/schemas" = ["schemas/*.schema.json"]
+"share/trace-the-law/examples" = ["examples/*.json", "examples/*.json.template"]
+"share/trace-the-law" = ["CHARTER.md", "CONTRIBUTING.md", "GOVERNANCE.md", "LICENSE", "PRIVACY.md", "README.md", "RIGHTS.md", "ROADMAP.md", "SECURITY.md", "THIRD_PARTY_NOTICES.md"]
+"share/trace-the-law/docs" = ["docs/agent-contract.md", "docs/architecture.md", "docs/correction-loop.md", "docs/data-model.md", "docs/organization-setup.md"]
+"share/trace-the-law/skills/trace-the-law" = ["skills/trace-the-law/SKILL.md"]

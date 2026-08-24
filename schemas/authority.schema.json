@@ -1,0 +1,236 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.trace-the-law.invalid/v1/authority.schema.json",
+  "title": "Trace the Law authority",
+  "description": "A stable identity profile for a public authority. Names and classifications are sourced; institutional parentage and territorial service remain separate, time-aware relationship assertions.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_id",
+    "schema_version",
+    "authority_id",
+    "names",
+    "authority_kind",
+    "branches",
+    "jurisdictions_served",
+    "parent_relationships",
+    "lifecycle_status",
+    "profile_evidence",
+    "profile_bindings",
+    "profile_review_state",
+    "producer",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "schema_id": {
+      "const": "https://schemas.trace-the-law.invalid/v1/authority.schema.json"
+    },
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/SchemaVersion"
+    },
+    "authority_id": {
+      "$ref": "common.schema.json#/$defs/AuthorityId"
+    },
+    "names": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/SourcedName" },
+      "contains": {
+        "properties": {
+          "name_type": {
+            "enum": ["official", "official_short", "former_official"]
+          }
+        },
+        "required": ["name_type"]
+      },
+      "minContains": 1
+    },
+    "authority_kind": {
+      "enum": [
+        "government",
+        "head_of_state",
+        "legislature",
+        "executive_office",
+        "ministry",
+        "department",
+        "agency",
+        "regulator",
+        "court",
+        "tribunal",
+        "prosecutorial_body",
+        "oversight_body",
+        "local_authority",
+        "treaty_body",
+        "intergovernmental_body",
+        "indigenous_governing_body",
+        "public_archive",
+        "other",
+        "unknown"
+      ]
+    },
+    "branches": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "legislative",
+          "executive",
+          "judicial",
+          "independent",
+          "intergovernmental",
+          "traditional",
+          "other",
+          "unknown"
+        ]
+      }
+    },
+    "jurisdictions_served": {
+      "description": "Typed adjacency references for discovery. Each assertion is canonical and must resolve to subject=this authority, predicate=serves_jurisdiction, and the listed object; no relationship facts are embedded here.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/JurisdictionServiceRef" }
+    },
+    "parent_relationships": {
+      "description": "Zero or more canonical institutional hierarchy assertion references. Empty means unmodelled, never that this authority has no parent.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/ParentAuthorityRef" }
+    },
+    "external_identifiers": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/ExternalIdentifier" }
+    },
+    "lifecycle_status": {
+      "enum": ["active", "historical", "reorganised", "abolished", "unknown"]
+    },
+    "profile_evidence": {
+      "description": "Evidence for kind, branch, and lifecycle classification. It does not substitute for separate hierarchy assertions.",
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/EvidenceCitation" }
+    },
+    "profile_bindings": {
+      "description": "Complete field-level provenance for authority kind, every branch, and lifecycle status.",
+      "type": "array",
+      "minItems": 3,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/ProfileBinding" }
+    },
+    "profile_review_state": {
+      "$ref": "common.schema.json#/$defs/ReviewState"
+    },
+    "producer": {
+      "$ref": "common.schema.json#/$defs/Producer"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "reviewed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "reviewer": {
+      "$ref": "common.schema.json#/$defs/Producer"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "profile_review_state": {
+            "enum": ["verified", "disputed", "superseded", "retracted"]
+          }
+        },
+        "required": ["profile_review_state"]
+      },
+      "then": {
+        "required": ["reviewed_at", "reviewer"],
+        "properties": {
+          "producer": { "required": ["producer_id"] },
+          "reviewer": { "required": ["producer_id"] }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "ProfileBinding": {
+      "allOf": [
+        { "$ref": "common.schema.json#/$defs/ProfileFieldBinding" },
+        {
+          "properties": {
+            "field": {
+              "enum": ["authority_kind", "branch", "lifecycle_status"]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "field": { "const": "authority_kind" } },
+            "required": ["field"]
+          },
+          "then": {
+            "properties": {
+              "normalized_value": {
+                "enum": [
+                  "government",
+                  "head_of_state",
+                  "legislature",
+                  "executive_office",
+                  "ministry",
+                  "department",
+                  "agency",
+                  "regulator",
+                  "court",
+                  "tribunal",
+                  "prosecutorial_body",
+                  "oversight_body",
+                  "local_authority",
+                  "treaty_body",
+                  "intergovernmental_body",
+                  "indigenous_governing_body",
+                  "public_archive",
+                  "other",
+                  "unknown"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "JurisdictionServiceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["jurisdiction_id", "assertion_id"],
+      "properties": {
+        "jurisdiction_id": {
+          "$ref": "common.schema.json#/$defs/JurisdictionId"
+        },
+        "assertion_id": {
+          "$ref": "common.schema.json#/$defs/AssertionId"
+        }
+      }
+    },
+    "ParentAuthorityRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["parent_authority_id", "assertion_id"],
+      "properties": {
+        "parent_authority_id": {
+          "$ref": "common.schema.json#/$defs/AuthorityId"
+        },
+        "assertion_id": {
+          "$ref": "common.schema.json#/$defs/AssertionId"
+        }
+      }
+    }
+  }
+}

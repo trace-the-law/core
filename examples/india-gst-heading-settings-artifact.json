@@ -1,0 +1,25 @@
+{
+  "schema_id": "https://schemas.trace-the-law.invalid/v1/artifact.schema.json",
+  "schema_version": "1.0",
+  "artifact_id": "urn:trace-the-law:artifact:sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+  "media_type": "application/json",
+  "byte_size": 2,
+  "content_digest": {
+    "algorithm": "sha256",
+    "value": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  },
+  "availability": "restricted",
+  "storage_locations": [
+    {
+      "role": "primary",
+      "uri": "urn:trace-the-law:example-restricted-object:sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "access": "project_restricted",
+      "last_verified_at": "2026-08-23T13:20:00Z"
+    }
+  ],
+  "quality": {
+    "character_count": 2,
+    "warnings": ["none"]
+  },
+  "created_at": "2026-08-23T13:20:00Z"
+}

@@ -1,0 +1,91 @@
+{
+  "schema_id": "https://schemas.trace-the-law.invalid/v1/correction-report.schema.json",
+  "schema_version": "1.0",
+  "report_id": "urn:trace-the-law:report:uuid:bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+  "corpus_snapshot_id": "urn:trace-the-law:snapshot:sha256:ede674af26fe71378503cd7b244487bf434583c2186ad69b52df96865b9ebbf1",
+  "jurisdiction_ids": [
+    "urn:trace-the-law:jurisdiction:uuid:11111111-1111-4111-8111-111111111111"
+  ],
+  "finding_status": "UNVERIFIED_LEAD",
+  "draft_status": "LOCAL_ONLY",
+  "privacy_status": "PASS",
+  "public_summary": "The registered detail page cannot establish exhaustive publication coverage for the declared source envelope.",
+  "finding": {
+    "issue_type": "COVERAGE_GAP",
+    "coverage_id": "urn:trace-the-law:coverage:uuid:99999999-9999-4999-8999-999999999999",
+    "gap_type": "unclassified_gap",
+    "affected_interval": {
+      "status": "unknown"
+    }
+  },
+  "impact": {
+    "level": "BLOCKS_ANSWER",
+    "affected_claim_ids": []
+  },
+  "targets": [
+    {
+      "entity_type": "coverage",
+      "entity_id": "urn:trace-the-law:coverage:uuid:99999999-9999-4999-8999-999999999999"
+    }
+  ],
+  "public_evidence": [
+    {
+      "role": "LOCATING_ONLY",
+      "official_status": "CLAIMED_OFFICIAL",
+      "authority_id": "urn:trace-the-law:authority:uuid:22222222-2222-4222-8222-222222222222",
+      "document_identifier": "Central Goods and Services Tax Act, 2017",
+      "official_url": "https://cbic-gst.gov.in/hindi/CGST-bill-e.html",
+      "retrieved_at": "2026-08-23T12:20:06Z",
+      "content_digest": {
+        "algorithm": "sha256",
+        "value": "6df796ca8d690225e62d7049df9006703d23be9641486d9f4587f565744cbaed"
+      },
+      "locator": {
+        "locator_type": "line_range",
+        "value": "405-409"
+      }
+    }
+  ],
+  "verification": {
+    "status": "UNVERIFIED",
+    "method": "DIRECT_OFFICIAL_FETCH",
+    "checked_at": "2026-08-23T12:20:06Z",
+    "independent_fetch": false,
+    "observed_digest": {
+      "algorithm": "sha256",
+      "value": "6df796ca8d690225e62d7049df9006703d23be9641486d9f4587f565744cbaed"
+    }
+  },
+  "proposed_change": {
+    "action": "UPDATE_SOURCE",
+    "entity_refs": [
+      {
+        "entity_type": "source",
+        "entity_id": "urn:trace-the-law:source:uuid:33333333-3333-4333-8333-333333333333"
+      }
+    ]
+  },
+  "coverage_context": {
+    "coverage_id": "urn:trace-the-law:coverage:uuid:99999999-9999-4999-8999-999999999999",
+    "source_id": "urn:trace-the-law:source:uuid:33333333-3333-4333-8333-333333333333",
+    "affected_date_axis": "publication",
+    "affected_interval": {
+      "status": "unknown"
+    }
+  },
+  "privacy_attestation": {
+    "contains_user_query": false,
+    "contains_user_facts": false,
+    "contains_auth_material": false,
+    "contains_local_file_content": false,
+    "sender_identity_forwarded": false,
+    "submission_mode": "local_only",
+    "timing_protection": "not_applicable"
+  },
+  "agent": {
+    "software_name": "trace-the-law-example-agent",
+    "software_version": "0.1.0",
+    "generated_at": "2026-08-23T12:20:06Z"
+  },
+  "created_at": "2026-08-23T12:20:06Z"
+}

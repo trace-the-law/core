@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.trace-the-law.invalid/v1/capture.schema.json",
+  "title": "Trace the Law source capture",
+  "description": "One append-only observation of bytes at one declared public source. Multiple capture records may point to the same deduplicated artifact without losing source URLs, retrieval times, or source-scoped rights.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_id",
+    "schema_version",
+    "capture_id",
+    "artifact_id",
+    "source_id",
+    "source_status",
+    "representation",
+    "acquisition",
+    "retrieval",
+    "rights",
+    "publication_clearance",
+    "created_at"
+  ],
+  "properties": {
+    "schema_id": {
+      "const": "https://schemas.trace-the-law.invalid/v1/capture.schema.json"
+    },
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/SchemaVersion"
+    },
+    "capture_id": {
+      "$ref": "common.schema.json#/$defs/CaptureId"
+    },
+    "artifact_id": {
+      "$ref": "common.schema.json#/$defs/ArtifactId"
+    },
+    "source_id": {
+      "$ref": "common.schema.json#/$defs/SourceId"
+    },
+    "source_status": {
+      "description": "Status of this exact source location, not a claim that Trace the Law is official.",
+      "enum": [
+        "verified_official",
+        "claimed_official",
+        "trusted_archive",
+        "secondary_locator"
+      ]
+    },
+    "representation": {
+      "enum": [
+        "document",
+        "structured_data",
+        "image",
+        "audio",
+        "video",
+        "archive",
+        "other"
+      ]
+    },
+    "acquisition": {
+      "$ref": "#/$defs/Acquisition"
+    },
+    "retrieval": {
+      "$ref": "#/$defs/Retrieval"
+    },
+    "rights": {
+      "description": "The assessment for this publisher/source route. It must not be silently generalized to other captures of identical bytes.",
+      "$ref": "common.schema.json#/$defs/RightsAssessment"
+    },
+    "publication_clearance": {
+      "$ref": "common.schema.json#/$defs/PublicationClearance"
+    },
+    "quality": {
+      "$ref": "artifact.schema.json#/$defs/Quality"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "$defs": {
+    "Acquisition": {
+      "type": "object",
+      "description": "A fail-closed route from this capture to one declared source-manifest entrypoint. Direct captures must use the exact entrypoint URL; discovered captures must cite the successful parent capture and exact link value from which their URL resolves.",
+      "additionalProperties": false,
+      "required": ["entrypoint_id", "route"],
+      "properties": {
+        "entrypoint_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._-]{1,63}$"
+        },
+        "route": {
+          "enum": ["entrypoint_exact", "discovered_link"]
+        },
+        "discovered_value": {
+          "description": "The exact absolute or relative link value cited in the parent capture. RFC 3986 URL resolution against the parent capture URL must equal retrieval.source_url.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        "resolution_method": {
+          "const": "rfc3986_urljoin"
+        },
+        "discovery_evidence": {
+          "allOf": [
+            { "$ref": "common.schema.json#/$defs/EvidenceCitation" },
+            { "required": ["capture_id", "quoted_text"] }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "route": { "const": "discovered_link" } },
+            "required": ["route"]
+          },
+          "then": {
+            "required": [
+              "discovered_value",
+              "resolution_method",
+              "discovery_evidence"
+            ]
+          },
+          "else": {
+            "not": {
+              "anyOf": [
+                { "required": ["discovered_value"] },
+                { "required": ["resolution_method"] },
+                { "required": ["discovery_evidence"] }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "Retrieval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_url", "retrieved_at", "http_status"],
+      "properties": {
+        "source_url": {
+          "$ref": "common.schema.json#/$defs/PublicUrl"
+        },
+        "retrieved_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "http_status": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 599
+        },
+        "source_last_modified": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "etag": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "response_media_type": {
+          "type": "string",
+          "pattern": "^[a-z0-9!#$&^_.+-]+/[a-z0-9!#$&^_.+-]+$",
+          "maxLength": 120
+        }
+      }
+    }
+  }
+}

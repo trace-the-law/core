@@ -1,0 +1,254 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.trace-the-law.invalid/v1/artifact.schema.json",
+  "title": "Trace the Law artifact",
+  "description": "One immutable byte sequence identified only by its SHA-256 digest. Source observations and transformation runs are separate capture and derivation records, so deduplication never discards provenance.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_id",
+    "schema_version",
+    "artifact_id",
+    "media_type",
+    "byte_size",
+    "content_digest",
+    "availability",
+    "created_at"
+  ],
+  "properties": {
+    "schema_id": {
+      "const": "https://schemas.trace-the-law.invalid/v1/artifact.schema.json"
+    },
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/SchemaVersion"
+    },
+    "artifact_id": {
+      "$ref": "common.schema.json#/$defs/ArtifactId"
+    },
+    "media_type": {
+      "type": "string",
+      "pattern": "^[a-z0-9!#$&^_.+-]+/[a-z0-9!#$&^_.+-]+$",
+      "maxLength": 120
+    },
+    "byte_size": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "content_digest": {
+      "$ref": "common.schema.json#/$defs/ContentDigest"
+    },
+    "availability": {
+      "enum": ["public_mirror", "official_link_only", "quarantined", "restricted", "removed_with_tombstone"]
+    },
+    "storage_locations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/StorageLocation" }
+    },
+    "quality": {
+      "$ref": "#/$defs/Quality"
+    },
+    "publication_basis": {
+      "description": "Capture or derivation routes whose source-scoped rights assessments support project publication. The semantic validator must resolve and verify every selected route.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/PublicationBasis" }
+    },
+    "legal_scope_attestations": {
+      "description": "Independent, digest-bound attestations that exact artifact bytes contain a complete legal unit. Required semantically before an artifact can serve as complete provision text.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/LegalScopeAttestation" }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "availability": { "const": "public_mirror" } },
+        "required": ["availability"]
+      },
+      "then": {
+        "required": ["storage_locations", "publication_basis"],
+        "properties": {
+          "storage_locations": {
+            "minItems": 1,
+            "contains": {
+              "properties": { "access": { "const": "public" } },
+              "required": ["access"]
+            },
+            "minContains": 1
+          },
+          "publication_basis": { "minItems": 1 }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "availability": { "enum": ["quarantined", "restricted"] }
+        },
+        "required": ["availability"]
+      },
+      "then": {
+        "required": ["storage_locations"],
+        "properties": {
+          "storage_locations": {
+            "minItems": 1,
+            "items": {
+              "properties": {
+                "access": {
+                  "enum": ["project_restricted", "unavailable"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "availability": { "enum": ["official_link_only", "removed_with_tombstone"] }
+        },
+        "required": ["availability"]
+      },
+      "then": {
+        "not": { "required": ["storage_locations"] }
+      }
+    }
+  ],
+  "$defs": {
+    "LegalScopeAttestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_id",
+        "version_id",
+        "provision_id",
+        "provision_version_id",
+        "scope",
+        "content_digest",
+        "producer",
+        "created_at",
+        "review"
+      ],
+      "properties": {
+        "record_id": { "$ref": "common.schema.json#/$defs/RecordId" },
+        "version_id": { "$ref": "common.schema.json#/$defs/VersionId" },
+        "provision_id": { "$ref": "common.schema.json#/$defs/ProvisionId" },
+        "provision_version_id": { "$ref": "common.schema.json#/$defs/ProvisionVersionId" },
+        "scope": { "const": "complete_provision_text" },
+        "content_digest": { "$ref": "common.schema.json#/$defs/ContentDigest" },
+        "producer": {
+          "allOf": [
+            { "$ref": "common.schema.json#/$defs/Producer" },
+            { "required": ["producer_id"] }
+          ]
+        },
+        "created_at": { "type": "string", "format": "date-time" },
+        "review": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["reviewed_attestation_digest", "reviewed_at", "reviewer"],
+          "properties": {
+            "reviewed_attestation_digest": { "$ref": "common.schema.json#/$defs/ContentDigest" },
+            "reviewed_at": { "type": "string", "format": "date-time" },
+            "reviewer": {
+              "allOf": [
+                { "$ref": "common.schema.json#/$defs/Producer" },
+                {
+                  "required": ["producer_id"],
+                  "properties": { "producer_type": { "const": "human" } }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "PublicationBasis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["basis_type", "basis_id"],
+      "properties": {
+        "basis_type": { "enum": ["capture", "derivation"] },
+        "basis_id": {}
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "basis_type": { "const": "capture" },
+            "basis_id": { "$ref": "common.schema.json#/$defs/CaptureId" }
+          }
+        },
+        {
+          "properties": {
+            "basis_type": { "const": "derivation" },
+            "basis_id": { "$ref": "common.schema.json#/$defs/DerivationId" }
+          }
+        }
+      ]
+    },
+    "StorageLocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "uri", "access"],
+      "properties": {
+        "role": {
+          "enum": ["primary", "mirror", "trusted_archive"]
+        },
+        "uri": {
+          "type": "string",
+          "format": "uri",
+          "maxLength": 2048
+        },
+        "access": {
+          "enum": ["public", "project_restricted", "unavailable"]
+        },
+        "last_verified_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "Quality": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "page_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "character_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ocr_confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "warnings": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "possible_missing_pages",
+              "possible_missing_tables",
+              "possible_missing_footnotes",
+              "possible_missing_schedules",
+              "low_ocr_confidence",
+              "reading_order_uncertain",
+              "encoding_loss",
+              "none"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

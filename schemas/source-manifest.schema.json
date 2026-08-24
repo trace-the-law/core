@@ -1,0 +1,285 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.trace-the-law.invalid/v1/source-manifest.schema.json",
+  "title": "Trace the Law source manifest",
+  "description": "Declares an official publication source, how it can be enumerated, and the rights and operational boundaries of its adapter.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_id",
+    "schema_version",
+    "source_id",
+    "identity_state",
+    "producer",
+    "name",
+    "authority_ids",
+    "jurisdiction_ids",
+    "source_classes",
+    "document_kinds",
+    "languages",
+    "official_homepage",
+    "entrypoints",
+    "expected_update_frequency",
+    "rights",
+    "status",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "schema_id": {
+      "const": "https://schemas.trace-the-law.invalid/v1/source-manifest.schema.json"
+    },
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/SchemaVersion"
+    },
+    "source_id": {
+      "$ref": "common.schema.json#/$defs/SourceId"
+    },
+    "identity_state": {
+      "enum": ["candidate", "reviewed"],
+      "description": "A candidate is only a locator. It cannot establish that a capture is official until the manifest identity is independently reviewed."
+    },
+    "producer": {
+      "allOf": [
+        { "$ref": "common.schema.json#/$defs/Producer" },
+        { "required": ["producer_id"] }
+      ]
+    },
+    "identity_evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/EvidenceCitation" }
+    },
+    "identity_review": {
+      "$ref": "#/$defs/IdentityReview"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 240
+    },
+    "authority_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "common.schema.json#/$defs/AuthorityId" }
+    },
+    "jurisdiction_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "common.schema.json#/$defs/JurisdictionId" }
+    },
+    "source_classes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "official_gazette",
+          "legislature",
+          "executive",
+          "regulator",
+          "court",
+          "tribunal",
+          "treaty_body",
+          "data_portal",
+          "press_office",
+          "archive",
+          "other_public_authority"
+        ]
+      }
+    },
+    "document_kinds": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/DocumentKind" }
+    },
+    "languages": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "common.schema.json#/$defs/LanguageTag" }
+    },
+    "official_homepage": {
+      "$ref": "common.schema.json#/$defs/PublicUrl"
+    },
+    "entrypoints": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/Entrypoint" }
+    },
+    "expected_update_frequency": {
+      "enum": ["continuous", "daily", "weekly", "monthly", "irregular", "historical_closed", "unknown"]
+    },
+    "identity_hints": {
+      "type": "array",
+      "description": "Source fields useful for matching documents. They are hints, never project IDs.",
+      "items": {
+        "enum": [
+          "publisher_identifier",
+          "gazette_number",
+          "court_citation",
+          "case_number",
+          "publication_date",
+          "title",
+          "language",
+          "content_digest"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "rights": {
+      "$ref": "common.schema.json#/$defs/RightsAssessment"
+    },
+    "adapter": {
+      "$ref": "#/$defs/Adapter"
+    },
+    "status": {
+      "enum": ["active", "degraded", "blocked", "historical", "retired"]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "identity_state": { "const": "reviewed" } },
+        "required": ["identity_state"]
+      },
+      "then": {
+        "required": ["identity_evidence", "identity_review"]
+      },
+      "else": {
+        "not": { "required": ["identity_review"] }
+      }
+    }
+  ],
+  "$defs": {
+    "IdentityReview": {
+      "type": "object",
+      "description": "Independent human approval of the exact manifest identity, entrypoints, authority mapping, and jurisdiction mapping.",
+      "additionalProperties": false,
+      "required": ["status", "checks", "reviewed_manifest_digest", "reviewed_at", "reviewer"],
+      "properties": {
+        "status": { "const": "verified" },
+        "checks": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["homepage", "entrypoints", "authority_mapping", "jurisdiction_mapping"],
+          "properties": {
+            "homepage": { "const": "verified" },
+            "entrypoints": { "const": "verified" },
+            "authority_mapping": { "const": "verified" },
+            "jurisdiction_mapping": { "const": "verified" }
+          }
+        },
+        "reviewed_manifest_digest": {
+          "description": "SHA-256 of the canonical complete source manifest excluding only this digest field.",
+          "$ref": "common.schema.json#/$defs/ContentDigest"
+        },
+        "reviewed_at": { "type": "string", "format": "date-time" },
+        "reviewer": {
+          "allOf": [
+            { "$ref": "common.schema.json#/$defs/Producer" },
+            {
+              "required": ["producer_id"],
+              "properties": { "producer_type": { "const": "human" } }
+            }
+          ]
+        }
+      }
+    },
+    "DocumentKind": {
+      "enum": [
+        "constitution",
+        "legislation",
+        "bill",
+        "rule",
+        "regulation",
+        "gazette_issue",
+        "notification",
+        "order",
+        "circular",
+        "guidance",
+        "instruction",
+        "judgment",
+        "tribunal_decision",
+        "interim_order",
+        "treaty",
+        "consultation",
+        "press_release",
+        "correction_notice",
+        "other_official_material"
+      ]
+    },
+    "Entrypoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entrypoint_id", "kind", "url", "enumeration_scope", "access"],
+      "properties": {
+        "entrypoint_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._-]{1,63}$"
+        },
+        "kind": {
+          "enum": ["api", "bulk_download", "rss", "sitemap", "index_page", "search_page", "calendar", "archive_page", "detail_page"]
+        },
+        "url": {
+          "$ref": "common.schema.json#/$defs/PublicUrl"
+        },
+        "enumeration_scope": {
+          "enum": ["declared_exhaustive", "partial", "discovery_only", "unknown"]
+        },
+        "access": {
+          "enum": ["public", "registration_required", "restricted", "unavailable"]
+        },
+        "languages": {
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/LanguageTag" },
+          "uniqueItems": true
+        },
+        "independent_group": {
+          "type": "string",
+          "description": "Entrypoints with the same group are not independent completeness checks.",
+          "pattern": "^[a-z0-9][a-z0-9._-]{1,63}$"
+        }
+      }
+    },
+    "Adapter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "enumeration_strategy", "change_detection"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "enumeration_strategy": {
+          "enum": ["identifier_sequence", "date_window", "pagination", "cursor", "sitemap_walk", "bulk_snapshot", "hybrid", "manual_register"]
+        },
+        "change_detection": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": ["content_digest", "etag", "last_modified", "source_revision", "index_diff", "periodic_refetch"]
+          }
+        }
+      }
+    }
+  }
+}

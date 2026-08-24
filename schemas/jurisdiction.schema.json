@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.trace-the-law.invalid/v1/jurisdiction.schema.json",
+  "title": "Trace the Law jurisdiction",
+  "description": "A stable identity profile for a territorial, institutional, functional, treaty-based, Indigenous, or historical legal scope. It is a graph node, not a country-only tree node.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_id",
+    "schema_version",
+    "jurisdiction_id",
+    "names",
+    "jurisdiction_kind",
+    "territorial_relationships",
+    "lifecycle_status",
+    "profile_evidence",
+    "profile_bindings",
+    "profile_review_state",
+    "producer",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "schema_id": {
+      "const": "https://schemas.trace-the-law.invalid/v1/jurisdiction.schema.json"
+    },
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/SchemaVersion"
+    },
+    "jurisdiction_id": {
+      "$ref": "common.schema.json#/$defs/JurisdictionId"
+    },
+    "names": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/SourcedName" },
+      "contains": {
+        "properties": {
+          "name_type": {
+            "enum": ["official", "official_short", "former_official"]
+          }
+        },
+        "required": ["name_type"]
+      },
+      "minContains": 1
+    },
+    "jurisdiction_kind": {
+      "enum": [
+        "world",
+        "supranational",
+        "treaty_area",
+        "sovereign_state",
+        "federal_unit",
+        "autonomous_area",
+        "indigenous_territory",
+        "municipality",
+        "judicial_district",
+        "administrative_area",
+        "functional_area",
+        "historical_polity",
+        "other",
+        "unknown"
+      ]
+    },
+    "territorial_relationships": {
+      "description": "Zero or more canonical territorial assertion references. Multiple within/overlap edges are allowed; no country ancestor is required. Empty means unmodelled, never root or independent.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/TerritorialRelationshipRef" }
+    },
+    "external_identifiers": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/ExternalIdentifier" }
+    },
+    "lifecycle_status": {
+      "enum": ["active", "historical", "reorganised", "abolished", "unknown"]
+    },
+    "profile_evidence": {
+      "description": "Evidence for kind and lifecycle classification. Territorial relationships remain separately cited assertions.",
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/EvidenceCitation" }
+    },
+    "profile_bindings": {
+      "description": "Complete field-level provenance for jurisdiction kind and lifecycle status.",
+      "type": "array",
+      "minItems": 2,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/ProfileBinding" }
+    },
+    "profile_review_state": {
+      "$ref": "common.schema.json#/$defs/ReviewState"
+    },
+    "producer": {
+      "$ref": "common.schema.json#/$defs/Producer"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "reviewed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "reviewer": {
+      "$ref": "common.schema.json#/$defs/Producer"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "profile_review_state": {
+            "enum": ["verified", "disputed", "superseded", "retracted"]
+          }
+        },
+        "required": ["profile_review_state"]
+      },
+      "then": {
+        "required": ["reviewed_at", "reviewer"],
+        "properties": {
+          "producer": { "required": ["producer_id"] },
+          "reviewer": { "required": ["producer_id"] }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "ProfileBinding": {
+      "allOf": [
+        { "$ref": "common.schema.json#/$defs/ProfileFieldBinding" },
+        {
+          "properties": {
+            "field": {
+              "enum": ["jurisdiction_kind", "lifecycle_status"]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "field": { "const": "jurisdiction_kind" } },
+            "required": ["field"]
+          },
+          "then": {
+            "properties": {
+              "normalized_value": {
+                "enum": [
+                  "world",
+                  "supranational",
+                  "treaty_area",
+                  "sovereign_state",
+                  "federal_unit",
+                  "autonomous_area",
+                  "indigenous_territory",
+                  "municipality",
+                  "judicial_district",
+                  "administrative_area",
+                  "functional_area",
+                  "historical_polity",
+                  "other",
+                  "unknown"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "TerritorialRelationshipRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["related_jurisdiction_id", "assertion_id"],
+      "properties": {
+        "related_jurisdiction_id": {
+          "$ref": "common.schema.json#/$defs/JurisdictionId"
+        },
+        "assertion_id": {
+          "$ref": "common.schema.json#/$defs/AssertionId"
+        }
+      }
+    }
+  }
+}

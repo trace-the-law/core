@@ -1,0 +1,626 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.trace-the-law.invalid/v1/correction-report.schema.json",
+  "title": "Trace the Law privacy-safe correction report",
+  "description": "An untrusted, evidence-backed lead. It cannot mutate the corpus and cannot carry a user's question, facts, identity, secrets, or private files.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_id",
+    "schema_version",
+    "report_id",
+    "corpus_snapshot_id",
+    "jurisdiction_ids",
+    "finding_status",
+    "draft_status",
+    "privacy_status",
+    "finding",
+    "impact",
+    "targets",
+    "public_evidence",
+    "verification",
+    "proposed_change",
+    "privacy_attestation",
+    "agent",
+    "created_at"
+  ],
+  "properties": {
+    "schema_id": {
+      "const": "https://schemas.trace-the-law.invalid/v1/correction-report.schema.json"
+    },
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/SchemaVersion"
+    },
+    "report_id": {
+      "$ref": "common.schema.json#/$defs/ReportId"
+    },
+    "corpus_snapshot_id": {
+      "$ref": "common.schema.json#/$defs/SnapshotId"
+    },
+    "jurisdiction_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "common.schema.json#/$defs/JurisdictionId" }
+    },
+    "finding_status": {
+      "enum": [
+        "NO_ISSUE",
+        "UNVERIFIED_LEAD",
+        "VERIFIED_GAP",
+        "VERIFIED_ERROR",
+        "OFFICIAL_CONFLICT",
+        "ALREADY_REPORTED"
+      ]
+    },
+    "draft_status": {
+      "enum": ["LOCAL_ONLY", "AWAITING_USER_ACTION", "PRIVATE_DRAFT", "READY_TO_OPEN", "OPENED", "EXPIRED", "REVOKED"]
+    },
+    "privacy_status": {
+      "enum": ["PASS", "BLOCKED_PRIVACY"]
+    },
+    "public_review_status": {
+      "enum": [
+        "SUBMITTED",
+        "TRIAGED",
+        "NEEDS_EVIDENCE",
+        "ACCEPTED",
+        "REJECTED",
+        "DUPLICATE",
+        "SUPERSEDED",
+        "APPLIED",
+        "PROPAGATION_FAILED"
+      ]
+    },
+    "public_summary": {
+      "type": "string",
+      "description": "A source-defect summary only. Automated privacy review is still required.",
+      "maxLength": 240
+    },
+    "finding": {
+      "oneOf": [
+        { "$ref": "#/$defs/MissingDocumentFinding" },
+        { "$ref": "#/$defs/WrongMetadataFinding" },
+        { "$ref": "#/$defs/ConversionFinding" },
+        { "$ref": "#/$defs/VersionChainFinding" },
+        { "$ref": "#/$defs/MissingRelationFinding" },
+        { "$ref": "#/$defs/WrongRelationFinding" },
+        { "$ref": "#/$defs/BrokenSourceFinding" },
+        { "$ref": "#/$defs/CoverageGapFinding" },
+        { "$ref": "#/$defs/RightsConcernFinding" }
+      ]
+    },
+    "impact": {
+      "$ref": "#/$defs/Impact"
+    },
+    "targets": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/EntityRef" }
+    },
+    "public_evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/CorrectionEvidence" }
+    },
+    "verification": {
+      "$ref": "#/$defs/Verification"
+    },
+    "proposed_change": {
+      "$ref": "#/$defs/ProposedChange"
+    },
+    "coverage_context": {
+      "$ref": "#/$defs/CoverageContext"
+    },
+    "privacy_attestation": {
+      "$ref": "#/$defs/PrivacyAttestation"
+    },
+    "privacy_review": {
+      "$ref": "#/$defs/PrivacyReview"
+    },
+    "agent": {
+      "$ref": "#/$defs/Agent"
+    },
+    "public_issue": {
+      "$ref": "#/$defs/PublicIssue"
+    },
+    "application": {
+      "$ref": "#/$defs/ApplicationProof"
+    },
+    "duplicate_of_report_id": {
+      "$ref": "common.schema.json#/$defs/ReportId"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "privacy_status": { "const": "BLOCKED_PRIVACY" } },
+        "required": ["privacy_status"]
+      },
+      "then": {
+        "properties": { "draft_status": { "const": "LOCAL_ONLY" } },
+        "not": {
+          "anyOf": [
+            { "required": ["public_review_status"] },
+            { "required": ["public_issue"] }
+          ]
+        }
+      }
+    },
+    {
+      "if": { "required": ["public_review_status"] },
+      "then": { "required": ["public_issue", "public_summary"] }
+    },
+    {
+      "if": {
+        "properties": {
+          "draft_status": { "enum": ["READY_TO_OPEN", "OPENED"] }
+        },
+        "required": ["draft_status"]
+      },
+      "then": {
+        "required": [
+          "privacy_review",
+          "public_summary"
+        ],
+        "properties": {
+          "privacy_status": { "const": "PASS" },
+          "privacy_attestation": {
+            "properties": {
+              "submission_mode": {
+                "enum": ["broker_sanitized", "source_monitor"]
+              }
+            }
+          },
+          "public_evidence": {
+            "items": {
+              "required": ["publication_clearance"],
+              "properties": {
+                "publication_clearance": {
+                  "allOf": [
+                    { "$ref": "common.schema.json#/$defs/PublicationClearance" },
+                    { "properties": { "status": { "const": "cleared" } } }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "draft_status": { "const": "READY_TO_OPEN" } },
+        "required": ["draft_status"]
+      },
+      "then": {
+        "not": {
+          "anyOf": [
+            { "required": ["public_issue"] },
+            { "required": ["public_review_status"] },
+            { "required": ["application"] }
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "draft_status": { "const": "OPENED" } },
+        "required": ["draft_status"]
+      },
+      "then": {
+        "required": ["public_issue", "public_review_status"]
+      }
+    },
+    {
+      "if": {
+        "properties": { "finding_status": { "const": "ALREADY_REPORTED" } },
+        "required": ["finding_status"]
+      },
+      "then": { "required": ["duplicate_of_report_id"] }
+    },
+    {
+      "if": {
+        "properties": { "public_review_status": { "const": "DUPLICATE" } },
+        "required": ["public_review_status"]
+      },
+      "then": { "required": ["duplicate_of_report_id"] }
+    },
+    {
+      "if": {
+        "properties": {
+          "public_review_status": {
+            "enum": ["APPLIED", "PROPAGATION_FAILED"]
+          }
+        },
+        "required": ["public_review_status"]
+      },
+      "then": { "required": ["application"] }
+    },
+    {
+      "if": {
+        "properties": { "finding_status": { "const": "UNVERIFIED_LEAD" } },
+        "required": ["finding_status"]
+      },
+      "then": {
+        "properties": {
+          "verification": {
+            "properties": { "status": { "const": "UNVERIFIED" } }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "finding_status": { "const": "VERIFIED_GAP" } },
+        "required": ["finding_status"]
+      },
+      "then": {
+        "properties": {
+          "verification": {
+            "properties": { "status": { "const": "VERIFIED_GAP" } }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "finding_status": { "const": "VERIFIED_ERROR" } },
+        "required": ["finding_status"]
+      },
+      "then": {
+        "properties": {
+          "verification": {
+            "properties": { "status": { "const": "VERIFIED_ERROR" } }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "finding_status": { "const": "OFFICIAL_CONFLICT" } },
+        "required": ["finding_status"]
+      },
+      "then": {
+        "properties": {
+          "verification": {
+            "properties": { "status": { "const": "OFFICIAL_CONFLICT" } }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "MissingDocumentFinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["issue_type", "source_id", "expected_identifier"],
+      "properties": {
+        "issue_type": { "const": "MISSING_DOCUMENT" },
+        "source_id": { "$ref": "common.schema.json#/$defs/SourceId" },
+        "expected_identifier": { "type": "string", "minLength": 1, "maxLength": 300 },
+        "official_url": { "$ref": "common.schema.json#/$defs/PublicUrl" }
+      }
+    },
+    "WrongMetadataFinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["issue_type", "target", "field"],
+      "properties": {
+        "issue_type": { "const": "WRONG_METADATA" },
+        "target": { "$ref": "common.schema.json#/$defs/EntityRef" },
+        "field": {
+          "enum": ["title", "identifier", "authority", "jurisdiction", "language", "record_kind", "publication_time", "effectiveness_time", "applicability_time", "source_url", "rights"]
+        }
+      }
+    },
+    "ConversionFinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["issue_type", "artifact_id", "error_kind", "locator"],
+      "properties": {
+        "issue_type": { "const": "BAD_CONVERSION" },
+        "artifact_id": { "$ref": "common.schema.json#/$defs/ArtifactId" },
+        "error_kind": {
+          "enum": ["missing_text", "wrong_text", "missing_table", "missing_footnote", "missing_schedule", "reading_order", "ocr_error", "encoding_error"]
+        },
+        "locator": { "$ref": "common.schema.json#/$defs/Locator" }
+      }
+    },
+    "VersionChainFinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["issue_type", "record_id", "version_ids"],
+      "properties": {
+        "issue_type": { "const": "WRONG_VERSION_CHAIN" },
+        "record_id": { "$ref": "common.schema.json#/$defs/RecordId" },
+        "version_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "common.schema.json#/$defs/VersionId" }
+        }
+      }
+    },
+    "MissingRelationFinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["issue_type", "subject", "predicate", "object"],
+      "properties": {
+        "issue_type": { "const": "MISSING_RELATION" },
+        "subject": { "$ref": "common.schema.json#/$defs/EntityRef" },
+        "predicate": { "$ref": "relationship-assertion.schema.json#/$defs/Predicate" },
+        "object": { "$ref": "common.schema.json#/$defs/EntityRef" }
+      }
+    },
+    "WrongRelationFinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["issue_type", "assertion_id"],
+      "properties": {
+        "issue_type": { "const": "WRONG_RELATION" },
+        "assertion_id": { "$ref": "common.schema.json#/$defs/AssertionId" }
+      }
+    },
+    "BrokenSourceFinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["issue_type", "source_id", "entrypoint_id", "failure_code"],
+      "properties": {
+        "issue_type": { "const": "BROKEN_SOURCE" },
+        "source_id": { "$ref": "common.schema.json#/$defs/SourceId" },
+        "entrypoint_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{1,63}$" },
+        "failure_code": {
+          "enum": ["not_found", "server_error", "rate_limited", "authentication_required", "source_changed", "parser_error", "other"]
+        },
+        "http_status": { "type": "integer", "minimum": 100, "maximum": 599 }
+      }
+    },
+    "CoverageGapFinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["issue_type", "coverage_id", "gap_type", "affected_interval"],
+      "properties": {
+        "issue_type": { "const": "COVERAGE_GAP" },
+        "coverage_id": { "$ref": "common.schema.json#/$defs/CoverageId" },
+        "gap_type": {
+          "enum": ["missing_document", "numbering_gap", "date_gap", "referenced_but_missing", "language_gap", "inaccessible_source", "unclassified_gap"]
+        },
+        "affected_interval": { "$ref": "common.schema.json#/$defs/TemporalInterval" }
+      }
+    },
+    "RightsConcernFinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["issue_type", "artifact_id", "concern"],
+      "properties": {
+        "issue_type": { "const": "RIGHTS_CONCERN" },
+        "artifact_id": { "$ref": "common.schema.json#/$defs/ArtifactId" },
+        "concern": {
+          "enum": ["unknown_basis", "attribution_missing", "restricted_material", "third_party_material", "privacy_or_sealing", "terms_changed"]
+        }
+      }
+    },
+    "Impact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level", "affected_claim_ids"],
+      "properties": {
+        "level": {
+          "enum": ["BLOCKS_ANSWER", "MAY_CHANGE_ANSWER", "CITATION_DEGRADED", "COSMETIC"]
+        },
+        "affected_claim_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{1,127}$"
+          }
+        }
+      }
+    },
+    "CorrectionEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "official_status", "official_url", "retrieved_at", "locator"],
+      "properties": {
+        "role": { "enum": ["SUPPORTING", "CONTRARY", "LOCATING_ONLY"] },
+        "official_status": { "enum": ["VERIFIED_OFFICIAL", "CLAIMED_OFFICIAL", "TRUSTED_ARCHIVE"] },
+        "authority_id": { "$ref": "common.schema.json#/$defs/AuthorityId" },
+        "source_id": { "$ref": "common.schema.json#/$defs/SourceId" },
+        "capture_id": { "$ref": "common.schema.json#/$defs/CaptureId" },
+        "artifact_id": { "$ref": "common.schema.json#/$defs/ArtifactId" },
+        "document_identifier": { "type": "string", "maxLength": 300 },
+        "official_url": { "$ref": "common.schema.json#/$defs/PublicUrl" },
+        "published_at": { "$ref": "common.schema.json#/$defs/TemporalPoint" },
+        "retrieved_at": { "type": "string", "format": "date-time" },
+        "content_digest": { "$ref": "common.schema.json#/$defs/ContentDigest" },
+        "locator": { "$ref": "common.schema.json#/$defs/Locator" },
+        "public_excerpt": { "type": "string", "maxLength": 500 },
+        "excerpt_digest": { "$ref": "common.schema.json#/$defs/ContentDigest" },
+        "content_verification": {
+          "$ref": "common.schema.json#/$defs/ContentVerification"
+        },
+        "publication_clearance": {
+          "$ref": "common.schema.json#/$defs/PublicationClearance"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "official_status": { "const": "VERIFIED_OFFICIAL" } },
+            "required": ["official_status"]
+          },
+          "then": {
+            "required": ["source_id", "capture_id", "artifact_id", "content_digest"]
+          }
+        },
+        {
+          "if": { "required": ["public_excerpt"] },
+          "then": {
+            "properties": {
+              "official_status": { "const": "VERIFIED_OFFICIAL" }
+            },
+            "required": ["excerpt_digest", "content_verification", "publication_clearance"]
+          }
+        },
+        {
+          "if": { "required": ["excerpt_digest"] },
+          "then": { "required": ["public_excerpt"] }
+        }
+      ]
+    },
+    "Verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "method", "checked_at", "independent_fetch"],
+      "properties": {
+        "status": { "enum": ["UNVERIFIED", "VERIFIED_GAP", "VERIFIED_ERROR", "OFFICIAL_CONFLICT", "NOT_REPRODUCED"] },
+        "method": { "enum": ["DIRECT_OFFICIAL_FETCH", "OFFICIAL_INDEX_RECONCILIATION", "TRUSTED_ARCHIVE_FETCH", "SOURCE_MONITOR"] },
+        "checked_at": { "type": "string", "format": "date-time" },
+        "independent_fetch": { "type": "boolean" },
+        "observed_digest": { "$ref": "common.schema.json#/$defs/ContentDigest" },
+        "conflicting_entity_refs": {
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/EntityRef" }
+        }
+      }
+    },
+    "ProposedChange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["action"],
+      "properties": {
+        "action": {
+          "enum": ["ADD_ARTIFACT", "ADD_VERSION", "ADD_RELATIONSHIP_ASSERTION", "SUPERSEDE_RELATIONSHIP_ASSERTION", "REPROCESS_ARTIFACT", "UPDATE_METADATA", "UPDATE_COVERAGE", "UPDATE_SOURCE", "QUARANTINE_ARTIFACT"]
+        },
+        "entity_refs": {
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/EntityRef" }
+        },
+        "proposed_predicate": { "$ref": "relationship-assertion.schema.json#/$defs/Predicate" },
+        "proposed_public_url": { "$ref": "common.schema.json#/$defs/PublicUrl" },
+        "proposed_identifier": { "type": "string", "maxLength": 300 },
+        "proposed_digest": { "$ref": "common.schema.json#/$defs/ContentDigest" },
+        "proposed_temporal_point": { "$ref": "common.schema.json#/$defs/TemporalPoint" }
+      }
+    },
+    "CoverageContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "affected_date_axis", "affected_interval"],
+      "properties": {
+        "coverage_id": { "$ref": "common.schema.json#/$defs/CoverageId" },
+        "source_id": { "$ref": "common.schema.json#/$defs/SourceId" },
+        "affected_date_axis": { "enum": ["publication", "effectiveness", "applicability", "observation"] },
+        "affected_interval": { "$ref": "common.schema.json#/$defs/TemporalInterval" }
+      }
+    },
+    "PrivacyAttestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contains_user_query",
+        "contains_user_facts",
+        "contains_auth_material",
+        "contains_local_file_content",
+        "sender_identity_forwarded",
+        "submission_mode",
+        "timing_protection"
+      ],
+      "properties": {
+        "contains_user_query": { "const": false },
+        "contains_user_facts": { "const": false },
+        "contains_auth_material": { "const": false },
+        "contains_local_file_content": { "const": false },
+        "sender_identity_forwarded": { "const": false },
+        "submission_mode": { "enum": ["local_only", "user_reviewed_private_intake", "broker_sanitized", "source_monitor"] },
+        "timing_protection": { "enum": ["user_controlled", "batched", "delayed", "not_applicable"] }
+      }
+    },
+    "PrivacyReview": {
+      "type": "object",
+      "description": "Independent release gate for the complete bot-created public payload. Automated scanning alone cannot establish this decision.",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "public_payload_origin",
+        "reviewed_payload_digest",
+        "reviewed_at",
+        "reviewer"
+      ],
+      "properties": {
+        "status": { "const": "CLEARED_FOR_PUBLICATION" },
+        "public_payload_origin": {
+          "const": "independently_reproduced_public_sources"
+        },
+        "reviewed_payload_digest": {
+          "description": "SHA-256 of the canonical pre-publication correction payload. The projection excludes the mutable lifecycle receipt fields draft_status, public_review_status, public_issue, application, and duplicate_of_report_id, and excludes only this digest field within privacy_review. All proposed public content, evidence, clearance decisions, reviewer identity, and review time remain digest-bound.",
+          "$ref": "common.schema.json#/$defs/ContentDigest"
+        },
+        "reviewed_at": { "type": "string", "format": "date-time" },
+        "reviewer": {
+          "allOf": [
+            { "$ref": "common.schema.json#/$defs/Producer" },
+            {
+              "required": ["producer_id"],
+              "properties": { "producer_type": { "const": "human" } }
+            }
+          ]
+        }
+      }
+    },
+    "Agent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["software_name", "software_version", "generated_at"],
+      "properties": {
+        "software_name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "software_version": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "generated_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "ApplicationProof": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["merge_commit_url", "invalidation_event_id", "snapshot_after"],
+      "properties": {
+        "merge_commit_url": {
+          "allOf": [
+            { "$ref": "common.schema.json#/$defs/PublicUrl" },
+            {
+              "pattern": "^https://github\\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+/commit/[a-f0-9]{40}(?:[a-f0-9]{24})?$"
+            }
+          ]
+        },
+        "invalidation_event_id": { "$ref": "common.schema.json#/$defs/EventId" },
+        "snapshot_after": { "$ref": "common.schema.json#/$defs/SnapshotId" }
+      }
+    },
+    "PublicIssue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["url", "created_by_project_bot", "published_at", "published_payload_digest"],
+      "properties": {
+        "url": {
+          "allOf": [
+            { "$ref": "common.schema.json#/$defs/PublicUrl" },
+            {
+              "pattern": "^https://github\\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+/issues/[1-9][0-9]*$"
+            }
+          ]
+        },
+        "created_by_project_bot": { "const": true },
+        "published_at": { "type": "string", "format": "date-time" },
+        "published_payload_digest": {
+          "description": "The server receipt for the exact pre-publication payload approved by privacy review.",
+          "$ref": "common.schema.json#/$defs/ContentDigest"
+        }
+      }
+    }
+  }
+}

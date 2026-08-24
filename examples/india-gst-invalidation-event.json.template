@@ -1,0 +1,66 @@
+{
+  "schema_id": "https://schemas.trace-the-law.invalid/v1/invalidation-event.schema.json",
+  "schema_version": "1.0",
+  "event_id": "urn:trace-the-law:event:uuid:dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+  "event_type": "coverage_changed",
+  "snapshot_before": "urn:trace-the-law:snapshot:sha256:ede674af26fe71378503cd7b244487bf434583c2186ad69b52df96865b9ebbf1",
+  "snapshot_after": "urn:trace-the-law:snapshot:sha256:2b91e3f2746a38559430a0b8a15a5e7bae0f5eda3fa1d54d5e2e2659bcb40da9",
+  "cause": {
+    "correction_report_ids": [
+      "urn:trace-the-law:report:uuid:bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb"
+    ]
+  },
+  "affected_entities": [
+    {
+      "entity": {
+        "entity_type": "coverage",
+        "entity_id": "urn:trace-the-law:coverage:uuid:99999999-9999-4999-8999-999999999999"
+      },
+      "change_kind": "updated"
+    },
+    {
+      "entity": {
+        "entity_type": "gap",
+        "entity_id": "urn:trace-the-law:gap:uuid:aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+      },
+      "change_kind": "superseded"
+    }
+  ],
+  "rebuilds": [
+    {
+      "component": "normalized_artifacts",
+      "status": "not_required"
+    },
+    {
+      "component": "provision_versions",
+      "status": "not_required"
+    },
+    {
+      "component": "relationship_graph",
+      "status": "not_required"
+    },
+    {
+      "component": "summaries",
+      "status": "not_required"
+    },
+    {
+      "component": "coverage_ledgers",
+      "status": "succeeded"
+    },
+    {
+      "component": "search_index",
+      "status": "succeeded"
+    },
+    {
+      "component": "embeddings",
+      "status": "not_required"
+    },
+    {
+      "component": "evidence_bundles",
+      "status": "succeeded"
+    }
+  ],
+  "propagation_status": "succeeded",
+  "contains_private_user_data": false,
+  "occurred_at": "2026-08-23T14:04:00Z"
+}

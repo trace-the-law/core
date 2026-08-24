@@ -1,0 +1,181 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.trace-the-law.invalid/v1/invalidation-event.schema.json",
+  "title": "Trace the Law invalidation event",
+  "description": "A public, privacy-safe account of which stable dependencies changed and whether every derived component rebuilt successfully.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_id",
+    "schema_version",
+    "event_id",
+    "event_type",
+    "snapshot_before",
+    "snapshot_after",
+    "cause",
+    "affected_entities",
+    "rebuilds",
+    "propagation_status",
+    "contains_private_user_data",
+    "occurred_at"
+  ],
+  "properties": {
+    "schema_id": {
+      "const": "https://schemas.trace-the-law.invalid/v1/invalidation-event.schema.json"
+    },
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/SchemaVersion"
+    },
+    "event_id": {
+      "$ref": "common.schema.json#/$defs/EventId"
+    },
+    "event_type": {
+      "enum": [
+        "artifact_added",
+        "source_content_changed",
+        "derived_artifact_rebuilt",
+        "record_version_added",
+        "assertion_state_changed",
+        "coverage_changed",
+        "rights_changed",
+        "artifact_quarantined"
+      ]
+    },
+    "snapshot_before": {
+      "$ref": "common.schema.json#/$defs/SnapshotId"
+    },
+    "snapshot_after": {
+      "$ref": "common.schema.json#/$defs/SnapshotId"
+    },
+    "cause": {
+      "$ref": "#/$defs/Cause"
+    },
+    "affected_entities": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/EntityChange" }
+    },
+    "rebuilds": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/Rebuild" }
+    },
+    "propagation_status": {
+      "enum": ["pending", "succeeded", "failed"]
+    },
+    "contains_private_user_data": {
+      "const": false
+    },
+    "occurred_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "propagation_status": { "const": "succeeded" } },
+        "required": ["propagation_status"]
+      },
+      "then": {
+        "properties": {
+          "rebuilds": {
+            "items": {
+              "properties": { "status": { "enum": ["succeeded", "not_required"] } },
+              "required": ["status"]
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "propagation_status": { "const": "failed" } },
+        "required": ["propagation_status"]
+      },
+      "then": {
+        "properties": {
+          "rebuilds": {
+            "contains": {
+              "properties": { "status": { "const": "failed" } },
+              "required": ["status"]
+            },
+            "minContains": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "propagation_status": { "const": "pending" } },
+        "required": ["propagation_status"]
+      },
+      "then": {
+        "properties": {
+          "rebuilds": {
+            "contains": {
+              "properties": { "status": { "const": "pending" } },
+              "required": ["status"]
+            },
+            "minContains": 1
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "Cause": {
+      "type": "object",
+      "description": "V1 requires a resolved, independently reviewed correction report. A merge URL is only a supplemental receipt; source-monitor causes remain disabled until a signed monitor-run contract exists.",
+      "additionalProperties": false,
+      "required": ["correction_report_ids"],
+      "properties": {
+        "correction_report_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "common.schema.json#/$defs/ReportId" }
+        },
+        "merge_commit_url": {
+          "$ref": "common.schema.json#/$defs/PublicUrl"
+        }
+      }
+    },
+    "EntityChange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entity", "change_kind"],
+      "properties": {
+        "entity": { "$ref": "common.schema.json#/$defs/EntityRef" },
+        "change_kind": {
+          "enum": ["added", "updated", "superseded", "retracted", "disputed", "marked_stale", "coverage_degraded", "coverage_restored", "quarantined"]
+        },
+        "replacement": { "$ref": "common.schema.json#/$defs/EntityRef" }
+      }
+    },
+    "Rebuild": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["component", "status"],
+      "properties": {
+        "component": {
+          "enum": ["normalized_artifacts", "provision_versions", "relationship_graph", "summaries", "search_index", "embeddings", "coverage_ledgers", "evidence_bundles"]
+        },
+        "status": { "enum": ["not_required", "pending", "succeeded", "failed"] },
+        "failure_code": {
+          "enum": ["dependency_missing", "validation_failed", "build_failed", "publication_failed", "unknown"]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "status": { "const": "failed" } },
+            "required": ["status"]
+          },
+          "then": { "required": ["failure_code"] },
+          "else": { "not": { "required": ["failure_code"] } }
+        }
+      ]
+    }
+  }
+}

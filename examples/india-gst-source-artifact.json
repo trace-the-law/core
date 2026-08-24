@@ -1,0 +1,13 @@
+{
+  "schema_id": "https://schemas.trace-the-law.invalid/v1/artifact.schema.json",
+  "schema_version": "1.0",
+  "artifact_id": "urn:trace-the-law:artifact:sha256:6df796ca8d690225e62d7049df9006703d23be9641486d9f4587f565744cbaed",
+  "media_type": "text/html",
+  "byte_size": 469557,
+  "content_digest": {
+    "algorithm": "sha256",
+    "value": "6df796ca8d690225e62d7049df9006703d23be9641486d9f4587f565744cbaed"
+  },
+  "availability": "official_link_only",
+  "created_at": "2026-08-23T12:20:06Z"
+}

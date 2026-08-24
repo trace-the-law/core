@@ -1,0 +1,120 @@
+{
+  "schema_id": "https://schemas.trace-the-law.invalid/v1/relationship-assertion.schema.json",
+  "schema_version": "1.0",
+  "assertion_id": "urn:trace-the-law:assertion:uuid:88888888-8888-4888-8888-888888888888",
+  "subject": {
+    "entity_type": "provision_version",
+    "entity_id": "urn:trace-the-law:provision-version:uuid:77777777-7777-4777-8777-777777777777"
+  },
+  "predicate": "applies",
+  "object": {
+    "entity_type": "jurisdiction",
+    "entity_id": "urn:trace-the-law:jurisdiction:uuid:11111111-1111-4111-8111-111111111111"
+  },
+  "interpretation_level": "explicit_source_text",
+  "scope": {
+    "extent": "selected_provisions",
+    "jurisdiction_ids": [
+      "urn:trace-the-law:jurisdiction:uuid:11111111-1111-4111-8111-111111111111"
+    ],
+    "target_provision_ids": [
+      "urn:trace-the-law:provision:uuid:66666666-6666-4666-8666-666666666666"
+    ]
+  },
+  "time_axes": {
+    "publication": {
+      "status": "exact",
+      "value": "2017-04-12",
+      "precision": "day",
+      "calendar": "gregory",
+      "verbatim_value": "2017-04-12"
+    },
+    "effectiveness": {
+      "status": "unknown"
+    },
+    "applicability": {
+      "status": "unknown"
+    },
+    "observation": {
+      "status": "exact",
+      "value": "2026-08-23T12:20:06Z",
+      "precision": "second",
+      "calendar": "gregory"
+    }
+  },
+  "status": "candidate",
+  "confidence": "medium",
+  "evidence": [
+    {
+      "artifact_id": "urn:trace-the-law:artifact:sha256:6df796ca8d690225e62d7049df9006703d23be9641486d9f4587f565744cbaed",
+      "capture_id": "urn:trace-the-law:capture:uuid:12121212-1212-4121-8121-121212121212",
+      "locator": {
+        "locator_type": "line_range",
+        "value": "405-409"
+      },
+      "quoted_text_digest": {
+        "algorithm": "sha256",
+        "value": "f6c1671f3e9cc800075672ba1d540f0187d6ef5903eff34ec0d5b7bf5534701d"
+      },
+      "content_verification": {
+        "method": "human_visual_match",
+        "verified_at": "2026-08-23T12:20:06Z",
+        "verifier": {
+          "producer_id": "urn:trace-the-law:producer:human:source-content-verifier",
+          "producer_type": "human",
+          "name": "Example source content verifier"
+        },
+        "verified_evidence_digest": {
+          "algorithm": "sha256",
+          "value": "b20c0db972109a3e835e216610ee21037cff8a931f21bc1e17b0997cdc24c94d"
+        }
+      }
+    },
+    {
+      "artifact_id": "urn:trace-the-law:artifact:sha256:6df796ca8d690225e62d7049df9006703d23be9641486d9f4587f565744cbaed",
+      "capture_id": "urn:trace-the-law:capture:uuid:12121212-1212-4121-8121-121212121212",
+      "locator": {
+        "locator_type": "line_range",
+        "value": "405-409"
+      },
+      "quoted_text": "2017-04-12",
+      "quoted_text_digest": {
+        "algorithm": "sha256",
+        "value": "f6999548ad98aebb898d7c4480d074022d55b6bcc23feb3fd60e6f4b6fcbd160"
+      },
+      "content_verification": {
+        "method": "human_visual_match",
+        "verified_at": "2026-08-23T12:20:06Z",
+        "verifier": {
+          "producer_id": "urn:trace-the-law:producer:human:source-content-verifier",
+          "producer_type": "human",
+          "name": "Example source content verifier"
+        },
+        "verified_evidence_digest": {
+          "algorithm": "sha256",
+          "value": "48333f3e9351620d41738716ed7d8de126bf35aa54b121a76c0f68c8793a0732"
+        }
+      },
+      "temporal_value_binding": {
+        "source_value": "2017-04-12",
+        "normalized_value": "2017-04-12",
+        "method": "source_exact",
+        "producer": {
+          "producer_id": "urn:trace-the-law:producer:importer:publication-date-extractor",
+          "producer_type": "importer",
+          "name": "india-gst-example-importer",
+          "version": "0.1.0",
+          "method": "exact date extraction"
+        },
+        "created_at": "2026-08-23T12:20:06Z"
+      }
+    }
+  ],
+  "producer": {
+    "producer_type": "importer",
+    "name": "india-gst-example-importer",
+    "version": "0.1.0",
+    "method": "illustrative structural extraction"
+  },
+  "created_at": "2026-08-23T12:20:06Z"
+}

@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.trace-the-law.invalid/v1/snapshot.schema.json",
+  "title": "Trace the Law corpus snapshot",
+  "description": "A content-addressed composite manifest over independently versioned core, registry, adapter, and corpus components. Components are stable IDs, not repository URLs, so one snapshot may span many hosts or repositories.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_id",
+    "schema_version",
+    "snapshot_id",
+    "hash_contract",
+    "components",
+    "schema_catalog",
+    "generated_at",
+    "producer"
+  ],
+  "properties": {
+    "schema_id": {
+      "const": "https://schemas.trace-the-law.invalid/v1/snapshot.schema.json"
+    },
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/SchemaVersion"
+    },
+    "snapshot_id": {
+      "$ref": "common.schema.json#/$defs/SnapshotId"
+    },
+    "hash_contract": {
+      "$ref": "#/$defs/HashContract"
+    },
+    "components": {
+      "description": "Must be stored in ascending component_id order before hashing. The validator rejects duplicate or out-of-order IDs.",
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/Component" }
+    },
+    "schema_catalog": {
+      "description": "Exact schema contracts used by the selected document set, including the transitive closure of local $ref targets. Every contract appears once, with no contracts outside that closure, in ascending schema_id order before hashing.",
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/SchemaContract" }
+    },
+    "predecessor_snapshot_id": {
+      "$ref": "common.schema.json#/$defs/SnapshotId"
+    },
+    "transition_event_id": {
+      "description": "The exact invalidation event that produced this post-genesis snapshot. This makes failed or pending propagation impossible to erase by omitting the event document.",
+      "$ref": "invalidation-event.schema.json#/properties/event_id"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "producer": {
+      "$ref": "common.schema.json#/$defs/Producer"
+    }
+  },
+  "allOf": [
+    {
+      "if": { "required": ["predecessor_snapshot_id"] },
+      "then": { "required": ["transition_event_id"] },
+      "else": { "not": { "required": ["transition_event_id"] } }
+    }
+  ],
+  "$defs": {
+    "HashContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "canonicalization",
+        "projection"
+      ],
+      "properties": {
+        "algorithm": {
+          "const": "sha256"
+        },
+        "canonicalization": {
+          "const": "rfc8785"
+        },
+        "projection": {
+          "const": "root_object_excluding_only_snapshot_id"
+        }
+      }
+    },
+    "Component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "component_id",
+        "component_kind",
+        "revision",
+        "root_digest"
+      ],
+      "properties": {
+        "component_id": {
+          "$ref": "common.schema.json#/$defs/ComponentId"
+        },
+        "component_kind": {
+          "enum": [
+            "global_core",
+            "global_registry",
+            "jurisdiction_adapter",
+            "corpus",
+            "object_index",
+            "other"
+          ]
+        },
+        "revision": {
+          "$ref": "#/$defs/Revision"
+        },
+        "root_digest": {
+          "$ref": "common.schema.json#/$defs/ContentDigest"
+        },
+        "jurisdiction_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "common.schema.json#/$defs/JurisdictionId" }
+        },
+        "authority_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "common.schema.json#/$defs/AuthorityId" }
+        }
+      }
+    },
+    "Revision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["revision_type", "value"],
+      "properties": {
+        "revision_type": {
+          "enum": [
+            "git_commit_sha1",
+            "git_commit_sha256",
+            "content_digest",
+            "release_identifier",
+            "other"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        }
+      }
+    },
+    "SchemaContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_id", "schema_version", "content_digest"],
+      "properties": {
+        "schema_id": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://schemas\\.trace-the-law\\.invalid/v1/[a-z0-9-]+\\.schema\\.json$"
+        },
+        "schema_version": {
+          "$ref": "common.schema.json#/$defs/SchemaVersion"
+        },
+        "content_digest": {
+          "$ref": "common.schema.json#/$defs/ContentDigest"
+        }
+      }
+    }
+  }
+}

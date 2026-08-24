@@ -1,0 +1,608 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.trace-the-law.invalid/v1/evidence-bundle.schema.json",
+  "title": "Trace the Law evidence bundle",
+  "description": "A snapshot-bound, coverage-aware evidence packet for an agent. It contains no private query facts and is not legal advice.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_id",
+    "schema_version",
+    "bundle_id",
+    "status",
+    "evaluation_context",
+    "dependencies",
+    "claims",
+    "citations",
+    "coverage",
+    "conflicts",
+    "unresolved_items",
+    "verification_tasks",
+    "handling",
+    "safety",
+    "generated_at"
+  ],
+  "properties": {
+    "schema_id": {
+      "const": "https://schemas.trace-the-law.invalid/v1/evidence-bundle.schema.json"
+    },
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/SchemaVersion"
+    },
+    "bundle_id": {
+      "$ref": "common.schema.json#/$defs/BundleId"
+    },
+    "status": {
+      "enum": ["SUPPORTED", "CONFLICTED", "MISSING_FACTS", "INSUFFICIENT_COVERAGE"]
+    },
+    "evaluation_context": {
+      "$ref": "#/$defs/EvaluationContext"
+    },
+    "dependencies": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "common.schema.json#/$defs/EntityRef" }
+    },
+    "claims": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/Claim" }
+    },
+    "citations": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "common.schema.json#/$defs/EvidenceCitation" }
+    },
+    "coverage": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/CoverageResult" }
+    },
+    "conflicts": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/Conflict" }
+    },
+    "unresolved_items": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/UnresolvedItem" }
+    },
+    "verification_tasks": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/VerificationTask" }
+    },
+    "handling": {
+      "$ref": "#/$defs/Handling"
+    },
+    "safety": {
+      "$ref": "#/$defs/Safety"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "status": { "const": "SUPPORTED" } },
+        "required": ["status"]
+      },
+      "then": {
+        "properties": {
+          "claims": { "minItems": 1 },
+          "citations": { "minItems": 1 },
+          "coverage": {
+            "items": {
+              "properties": {
+                "status": { "const": "covered_for_declared_scope" },
+                "gap_ids": { "maxItems": 0 }
+              }
+            }
+          },
+          "conflicts": {
+            "items": {
+              "properties": {
+                "resolution_state": {
+                  "enum": ["hierarchy_resolved", "time_resolved", "scope_resolved"]
+                }
+              }
+            }
+          },
+          "unresolved_items": { "maxItems": 0 },
+          "verification_tasks": { "maxItems": 0 }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "status": { "const": "CONFLICTED" } },
+        "required": ["status"]
+      },
+      "then": {
+        "properties": {
+          "claims": { "minItems": 1 },
+          "citations": { "minItems": 1 },
+          "coverage": {
+            "items": {
+              "properties": {
+                "status": { "const": "covered_for_declared_scope" },
+                "gap_ids": { "maxItems": 0 }
+              }
+            }
+          },
+          "conflicts": {
+            "minItems": 1,
+            "contains": {
+              "properties": { "resolution_state": { "const": "unresolved" } },
+              "required": ["resolution_state"]
+            },
+            "minContains": 1
+          },
+          "unresolved_items": {
+            "contains": {
+              "properties": {
+                "kind": { "const": "conflicting_assertions" },
+                "severity": { "const": "blocking" }
+              },
+              "required": ["kind", "severity"]
+            },
+            "minContains": 1
+          },
+          "verification_tasks": { "minItems": 1 }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "status": { "const": "MISSING_FACTS" } },
+        "required": ["status"]
+      },
+      "then": {
+        "properties": {
+          "coverage": {
+            "items": {
+              "properties": {
+                "status": { "const": "covered_for_declared_scope" },
+                "gap_ids": { "maxItems": 0 }
+              }
+            }
+          },
+          "conflicts": { "maxItems": 0 },
+          "unresolved_items": {
+            "contains": {
+              "properties": {
+                "kind": { "const": "missing_fact" },
+                "severity": { "const": "blocking" }
+              },
+              "required": ["kind", "severity"]
+            },
+            "minContains": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "status": { "const": "INSUFFICIENT_COVERAGE" } },
+        "required": ["status"]
+      },
+      "then": {
+        "properties": {
+          "unresolved_items": {
+            "contains": {
+              "properties": { "severity": { "const": "blocking" } },
+              "required": ["severity"]
+            },
+            "minContains": 1
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "EvaluationContext": {
+      "type": "object",
+      "description": "Query evaluation boundaries. They are separate from intrinsic record time_axes.",
+      "additionalProperties": false,
+      "required": [
+        "jurisdiction_ids",
+        "facts_period",
+        "effective_at",
+        "authority_cutoff",
+        "corpus_snapshot"
+      ],
+      "properties": {
+        "jurisdiction_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "common.schema.json#/$defs/JurisdictionId" }
+        },
+        "facts_period": {
+          "$ref": "common.schema.json#/$defs/TemporalInterval"
+        },
+        "effective_at": {
+          "$ref": "common.schema.json#/$defs/TemporalPoint"
+        },
+        "authority_cutoff": {
+          "$ref": "common.schema.json#/$defs/TemporalPoint"
+        },
+        "corpus_snapshot": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["snapshot_id", "recorded_at"],
+          "properties": {
+            "snapshot_id": { "$ref": "common.schema.json#/$defs/SnapshotId" },
+            "recorded_at": { "type": "string", "format": "date-time" }
+          }
+        }
+      }
+    },
+    "Claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claim_id",
+        "classification",
+        "content_use",
+        "claim_text",
+        "subjects",
+        "jurisdiction_ids",
+        "applicability",
+        "citation_indexes",
+        "assertion_ids",
+        "contrary_assertion_ids"
+      ],
+      "properties": {
+        "claim_id": { "$ref": "common.schema.json#/$defs/ClaimId" },
+        "classification": { "enum": ["DIRECT", "DERIVED"] },
+        "content_use": {
+          "description": "Rights-relevant characterization of what the public claim reproduces or transforms.",
+          "enum": ["bibliographic_fact", "source_excerpt", "summary", "translation", "other"]
+        },
+        "claim_text": { "type": "string", "minLength": 1, "maxLength": 1200 },
+        "bibliographic_facts": {
+          "description": "Structured, subject-bound metadata used to render a bibliographic-only claim. Public claim_text is validated as the deterministic rendering of these facts so copied source text cannot be hidden behind this label.",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 12,
+          "items": { "$ref": "#/$defs/BibliographicFact" }
+        },
+        "subjects": {
+          "description": "Exact records, versions, provisions, assertions, authorities, or other corpus entities this claim is about.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "common.schema.json#/$defs/EntityRef" }
+        },
+        "jurisdiction_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "common.schema.json#/$defs/JurisdictionId" }
+        },
+        "applicability": { "$ref": "common.schema.json#/$defs/TemporalInterval" },
+        "assumption_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z][a-z0-9._-]{1,63}$" }
+        },
+        "citation_indexes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "integer", "minimum": 0 }
+        },
+        "assertion_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "common.schema.json#/$defs/AssertionId" }
+        },
+        "contrary_assertion_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "common.schema.json#/$defs/AssertionId" }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "classification": { "const": "DERIVED" } },
+            "required": ["classification"]
+          },
+          "then": {
+            "properties": { "assertion_ids": { "minItems": 1 } }
+          }
+        },
+        {
+          "if": {
+            "properties": { "content_use": { "const": "bibliographic_fact" } },
+            "required": ["content_use"]
+          },
+          "then": { "required": ["bibliographic_facts"] },
+          "else": { "not": { "required": ["bibliographic_facts"] } }
+        },
+        {
+          "if": {
+            "properties": {
+              "content_use": { "enum": ["summary", "translation"] }
+            },
+            "required": ["content_use"]
+          },
+          "then": {
+            "properties": { "classification": { "const": "DERIVED" } }
+          }
+        }
+      ]
+    },
+    "BibliographicFact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subject_index", "field", "value"],
+      "properties": {
+        "subject_index": {
+          "description": "Zero-based index into the claim subjects array.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "field": {
+          "enum": [
+            "entity_id",
+            "canonical_title",
+            "record_kind",
+            "identifier",
+            "designation",
+            "heading",
+            "name",
+            "language",
+            "predicate"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        }
+      }
+    },
+    "CoverageResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["coverage_id", "status", "gap_ids", "fresh_until"],
+      "properties": {
+        "coverage_id": { "$ref": "common.schema.json#/$defs/CoverageId" },
+        "status": {
+          "enum": ["unknown", "enumerating", "covered_for_declared_scope", "known_gap", "stale", "degraded", "blocked"]
+        },
+        "gap_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "common.schema.json#/$defs/GapId" }
+        },
+        "last_successful_enumeration_at": { "type": "string", "format": "date-time" },
+        "fresh_until": { "type": "string", "format": "date-time" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": { "const": "covered_for_declared_scope" }
+            },
+            "required": ["status"]
+          },
+          "then": {
+            "required": ["last_successful_enumeration_at"],
+            "properties": { "gap_ids": { "maxItems": 0 } }
+          }
+        }
+      ]
+    },
+    "Conflict": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["assertion_ids", "resolution_state"],
+      "properties": {
+        "assertion_ids": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": { "$ref": "common.schema.json#/$defs/AssertionId" }
+        },
+        "resolution_state": { "enum": ["unresolved", "hierarchy_resolved", "time_resolved", "scope_resolved"] },
+        "resolution_assertion_ids": {
+          "description": "Reviewed assertions supporting a hierarchy, time, or scope resolution.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "common.schema.json#/$defs/AssertionId" }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "resolution_state": { "const": "unresolved" } },
+            "required": ["resolution_state"]
+          },
+          "then": { "not": { "required": ["resolution_assertion_ids"] } },
+          "else": { "required": ["resolution_assertion_ids"] }
+        }
+      ]
+    },
+    "UnresolvedItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "severity", "related_entities"],
+      "properties": {
+        "kind": {
+          "enum": ["missing_fact", "missing_dependency", "coverage_gap", "conflicting_assertions", "unknown_effective_time", "unknown_applicability", "stale_source", "unverified_assertion", "rights_limited_artifact"]
+        },
+        "severity": { "enum": ["information", "warning", "blocking"] },
+        "related_entities": {
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/EntityRef" }
+        },
+        "correction_report_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "common.schema.json#/$defs/ReportId" }
+        }
+      }
+    },
+    "VerificationTask": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verification_task_id", "task_type", "reason", "targets", "official_entrypoints"],
+      "properties": {
+        "verification_task_id": { "$ref": "common.schema.json#/$defs/VerificationTaskId" },
+        "task_type": {
+          "enum": ["fetch_official_artifact", "check_source_index", "trace_amendment", "check_commencement", "check_later_authority", "verify_conversion", "check_rights"]
+        },
+        "reason": {
+          "enum": ["missing", "stale", "conflicting", "unverified", "changed_source", "coverage_unknown", "quality_warning"]
+        },
+        "targets": {
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/EntityRef" }
+        },
+        "official_entrypoints": {
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/PublicUrl" }
+        }
+      }
+    },
+    "Handling": {
+      "type": "object",
+      "description": "Fail-closed retention and release policy for a query-shaped bundle.",
+      "additionalProperties": false,
+      "required": ["persistence", "privacy_classification"],
+      "properties": {
+        "persistence": {
+          "enum": ["client_ephemeral", "private_retained", "public"]
+        },
+        "privacy_classification": {
+          "enum": ["confidential_query_context", "public_only"]
+        },
+        "retention_until": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "public_release": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "reviewed_payload_digest",
+            "publication_clearance",
+            "delivery_bases"
+          ],
+          "properties": {
+            "reviewed_payload_digest": {
+              "description": "SHA-256 of canonical bundle content excluding only handling.public_release.reviewed_payload_digest; reviewer identity, review time, and clearance checks remain digest-bound.",
+              "$ref": "common.schema.json#/$defs/ContentDigest"
+            },
+            "publication_clearance": {
+              "$ref": "common.schema.json#/$defs/PublicationClearance"
+            },
+            "delivery_bases": {
+              "description": "Digest-pinned capture and derivation release decisions used to deliver this bundle after its historical corpus snapshot.",
+              "type": "array",
+              "uniqueItems": true,
+              "items": { "$ref": "#/$defs/DeliveryBasis" }
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "persistence": { "const": "client_ephemeral" } },
+            "required": ["persistence"]
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                { "required": ["retention_until"] },
+                { "required": ["public_release"] }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "persistence": { "const": "private_retained" } },
+            "required": ["persistence"]
+          },
+          "then": {
+            "required": ["retention_until"],
+            "not": { "required": ["public_release"] }
+          }
+        },
+        {
+          "if": {
+            "properties": { "persistence": { "const": "public" } },
+            "required": ["persistence"]
+          },
+          "then": {
+            "required": ["public_release"],
+            "properties": {
+              "privacy_classification": { "const": "public_only" }
+            },
+            "not": { "required": ["retention_until"] }
+          }
+        }
+      ]
+    },
+    "DeliveryBasis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entity_type",
+        "entity_id",
+        "publication_clearance_digest"
+      ],
+      "properties": {
+        "entity_type": {
+          "enum": ["capture", "derivation"]
+        },
+        "entity_id": {},
+        "publication_clearance_digest": {
+          "$ref": "common.schema.json#/$defs/ContentDigest"
+        },
+        "reviewed_assessment_digest": {
+          "description": "Required when release relies on a capture's reuse-rights assessment.",
+          "$ref": "common.schema.json#/$defs/ContentDigest"
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "entity_type": { "const": "capture" },
+            "entity_id": { "$ref": "common.schema.json#/$defs/CaptureId" }
+          }
+        },
+        {
+          "properties": {
+            "entity_type": { "const": "derivation" },
+            "entity_id": { "$ref": "common.schema.json#/$defs/DerivationId" }
+          },
+          "not": { "required": ["reviewed_assessment_digest"] }
+        }
+      ]
+    },
+    "Safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "not_legal_advice",
+        "official_sources_control",
+        "absence_is_not_nonexistence",
+        "contains_private_user_facts"
+      ],
+      "properties": {
+        "not_legal_advice": { "const": true },
+        "official_sources_control": { "const": true },
+        "absence_is_not_nonexistence": { "const": true },
+        "contains_private_user_facts": { "const": false }
+      }
+    }
+  }
+}

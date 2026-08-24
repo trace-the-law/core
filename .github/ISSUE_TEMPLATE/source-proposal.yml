@@ -1,0 +1,93 @@
+name: Propose an official source
+description: Suggest a public authority source for coverage
+title: "[Source]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This issue is public. Propose only an official public source and its publication context. Do not include personal case facts, contact details, credentials, sealed material, or private documents. A public URL does not by itself establish permission to mirror or transcribe its contents.
+
+  - type: input
+    id: jurisdiction
+    attributes:
+      label: Jurisdiction or legal system
+      placeholder: Country, supranational body, state, province, municipality, treaty system, or historical jurisdiction
+    validations:
+      required: true
+
+  - type: input
+    id: authority
+    attributes:
+      label: Publishing authority
+      placeholder: Full official name
+    validations:
+      required: true
+
+  - type: input
+    id: source_url
+    attributes:
+      label: Official source URL
+      placeholder: https://...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: source_type
+    attributes:
+      label: Material published
+      multiple: true
+      options:
+        - Constitution or legislation
+        - Regulation, rule, order, or gazette
+        - Court or tribunal decision
+        - Administrative guidance, circular, or notice
+        - Consultation or announcement
+        - Official index, register, feed, or API
+        - Other official material
+    validations:
+      required: true
+
+  - type: input
+    id: languages
+    attributes:
+      label: Original language or languages
+    validations:
+      required: true
+
+  - type: input
+    id: coverage
+    attributes:
+      label: Known coverage period
+      description: Give dates only when supported by the source; otherwise say unknown.
+      placeholder: 2001-present, or unknown
+    validations:
+      required: true
+
+  - type: input
+    id: rights_url
+    attributes:
+      label: Licence, copyright, or terms URL
+      description: Link to the publisher's reuse terms when available; otherwise say not found.
+      placeholder: https://... or not found
+    validations:
+      required: true
+
+  - type: textarea
+    id: access_notes
+    attributes:
+      label: Access, format, and gap notes
+      description: Note indexes, feeds, formats, access limits, known missing periods, and whether the source identifies an authentic version.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: acknowledgements
+    attributes:
+      label: Public submission acknowledgements
+      options:
+        - label: I understand this issue and my GitHub identity will be public.
+          required: true
+        - label: I have not included personal, confidential, sealed, or security-sensitive information.
+          required: true
+        - label: I understand that official publication does not automatically grant reuse or redistribution rights.
+          required: true

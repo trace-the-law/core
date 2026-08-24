@@ -1,0 +1,1343 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.trace-the-law.invalid/v1/common.schema.json",
+  "title": "Trace the Law shared definitions",
+  "description": "Shared, global primitives. This schema is a definition library and is not a corpus document type.",
+  "$defs": {
+    "SchemaVersion": {
+      "const": "1.0"
+    },
+    "StableId": {
+      "type": "string",
+      "description": "A location-independent project identifier. Repository paths and filenames are forbidden inputs to identity.",
+      "pattern": "^urn:trace-the-law:(authority|jurisdiction|source|capture|derivation|component|record|version|provision|provision-version|assertion|claim|coverage|gap|report|bundle|event|verification-task):uuid:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "AuthorityId": {
+      "type": "string",
+      "pattern": "^urn:trace-the-law:authority:uuid:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "JurisdictionId": {
+      "type": "string",
+      "pattern": "^urn:trace-the-law:jurisdiction:uuid:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "SourceId": {
+      "type": "string",
+      "pattern": "^urn:trace-the-law:source:uuid:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "CaptureId": {
+      "type": "string",
+      "description": "Identity for one observation or retrieval from one declared source. Multiple captures may resolve to the same content-addressed artifact.",
+      "pattern": "^urn:trace-the-law:capture:uuid:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "DerivationId": {
+      "type": "string",
+      "description": "Identity for one reproducible transformation route. Multiple derivations may produce the same content-addressed artifact.",
+      "pattern": "^urn:trace-the-law:derivation:uuid:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "ComponentId": {
+      "type": "string",
+      "description": "Stable identity for one independently versioned snapshot component, independent of its repository location.",
+      "pattern": "^urn:trace-the-law:component:uuid:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "RecordId": {
+      "type": "string",
+      "pattern": "^urn:trace-the-law:record:uuid:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "VersionId": {
+      "type": "string",
+      "pattern": "^urn:trace-the-law:version:uuid:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "ProvisionId": {
+      "type": "string",
+      "pattern": "^urn:trace-the-law:provision:uuid:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "ProvisionVersionId": {
+      "type": "string",
+      "pattern": "^urn:trace-the-law:provision-version:uuid:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "AssertionId": {
+      "type": "string",
+      "pattern": "^urn:trace-the-law:assertion:uuid:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "ClaimId": {
+      "type": "string",
+      "pattern": "^urn:trace-the-law:claim:uuid:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "CoverageId": {
+      "type": "string",
+      "pattern": "^urn:trace-the-law:coverage:uuid:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "GapId": {
+      "type": "string",
+      "pattern": "^urn:trace-the-law:gap:uuid:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "ReportId": {
+      "type": "string",
+      "pattern": "^urn:trace-the-law:report:uuid:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "BundleId": {
+      "type": "string",
+      "pattern": "^urn:trace-the-law:bundle:uuid:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "EventId": {
+      "type": "string",
+      "pattern": "^urn:trace-the-law:event:uuid:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "VerificationTaskId": {
+      "type": "string",
+      "pattern": "^urn:trace-the-law:verification-task:uuid:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "ArtifactId": {
+      "type": "string",
+      "description": "An artifact identity derived only from its immutable bytes.",
+      "pattern": "^urn:trace-the-law:artifact:sha256:[a-f0-9]{64}$"
+    },
+    "SnapshotId": {
+      "type": "string",
+      "description": "A content-addressed corpus snapshot.",
+      "pattern": "^urn:trace-the-law:snapshot:sha256:[a-f0-9]{64}$"
+    },
+    "ContentDigest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "value"],
+      "properties": {
+        "algorithm": {
+          "const": "sha256"
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "PublicUrl": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https?://",
+      "maxLength": 2048
+    },
+    "LanguageTag": {
+      "type": "string",
+      "description": "A conservative BCP 47 language tag.",
+      "pattern": "^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$",
+      "maxLength": 35
+    },
+    "EntityType": {
+      "enum": [
+        "authority",
+        "jurisdiction",
+        "source",
+        "capture",
+        "derivation",
+        "component",
+        "snapshot",
+        "record",
+        "version",
+        "provision",
+        "provision_version",
+        "assertion",
+        "claim",
+        "coverage",
+        "gap",
+        "report",
+        "bundle",
+        "event",
+        "artifact"
+      ]
+    },
+    "EntityRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entity_type", "entity_id"],
+      "properties": {
+        "entity_type": {
+          "$ref": "#/$defs/EntityType"
+        },
+        "entity_id": {}
+      },
+      "oneOf": [
+        { "properties": { "entity_type": { "const": "authority" }, "entity_id": { "$ref": "#/$defs/AuthorityId" } } },
+        { "properties": { "entity_type": { "const": "jurisdiction" }, "entity_id": { "$ref": "#/$defs/JurisdictionId" } } },
+        { "properties": { "entity_type": { "const": "source" }, "entity_id": { "$ref": "#/$defs/SourceId" } } },
+        { "properties": { "entity_type": { "const": "capture" }, "entity_id": { "$ref": "#/$defs/CaptureId" } } },
+        { "properties": { "entity_type": { "const": "derivation" }, "entity_id": { "$ref": "#/$defs/DerivationId" } } },
+        { "properties": { "entity_type": { "const": "component" }, "entity_id": { "$ref": "#/$defs/ComponentId" } } },
+        { "properties": { "entity_type": { "const": "snapshot" }, "entity_id": { "$ref": "#/$defs/SnapshotId" } } },
+        { "properties": { "entity_type": { "const": "record" }, "entity_id": { "$ref": "#/$defs/RecordId" } } },
+        { "properties": { "entity_type": { "const": "version" }, "entity_id": { "$ref": "#/$defs/VersionId" } } },
+        { "properties": { "entity_type": { "const": "provision" }, "entity_id": { "$ref": "#/$defs/ProvisionId" } } },
+        { "properties": { "entity_type": { "const": "provision_version" }, "entity_id": { "$ref": "#/$defs/ProvisionVersionId" } } },
+        { "properties": { "entity_type": { "const": "assertion" }, "entity_id": { "$ref": "#/$defs/AssertionId" } } },
+        { "properties": { "entity_type": { "const": "claim" }, "entity_id": { "$ref": "#/$defs/ClaimId" } } },
+        { "properties": { "entity_type": { "const": "coverage" }, "entity_id": { "$ref": "#/$defs/CoverageId" } } },
+        { "properties": { "entity_type": { "const": "gap" }, "entity_id": { "$ref": "#/$defs/GapId" } } },
+        { "properties": { "entity_type": { "const": "report" }, "entity_id": { "$ref": "#/$defs/ReportId" } } },
+        { "properties": { "entity_type": { "const": "bundle" }, "entity_id": { "$ref": "#/$defs/BundleId" } } },
+        { "properties": { "entity_type": { "const": "event" }, "entity_id": { "$ref": "#/$defs/EventId" } } },
+        { "properties": { "entity_type": { "const": "artifact" }, "entity_id": { "$ref": "#/$defs/ArtifactId" } } }
+      ]
+    },
+    "NormalizedTemporalValue": {
+      "description": "A normalized proleptic-Gregorian value. Preserve any source-calendar expression in verbatim_value.",
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9]{4}$"
+        },
+        {
+          "type": "string",
+          "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
+        },
+        {
+          "type": "string",
+          "format": "date"
+        },
+        {
+          "type": "string",
+          "format": "date-time"
+        }
+      ]
+    },
+    "TemporalPoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": {
+          "enum": ["exact", "approximate", "unknown"]
+        },
+        "value": {
+          "$ref": "#/$defs/NormalizedTemporalValue"
+        },
+        "precision": {
+          "enum": ["year", "month", "day", "second"]
+        },
+        "calendar": {
+          "description": "Calendar for the normalized value. Normalized values always use the proleptic Gregorian calendar; preserve any source-calendar expression in verbatim_value and its evidence binding.",
+          "const": "gregory",
+          "default": "gregory"
+        },
+        "verbatim_value": {
+          "type": "string",
+          "maxLength": 240
+        },
+        "basis_assertion_ids": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/AssertionId" },
+          "uniqueItems": true
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": { "enum": ["exact", "approximate"] }
+            },
+            "required": ["status"]
+          },
+          "then": {
+            "required": ["value", "precision"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": { "const": "unknown" }
+            },
+            "required": ["status"]
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                { "required": ["value"] },
+                { "required": ["precision"] }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "precision": { "const": "year" } },
+            "required": ["precision"]
+          },
+          "then": {
+            "properties": {
+              "value": { "type": "string", "pattern": "^[0-9]{4}$" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "precision": { "const": "month" } },
+            "required": ["precision"]
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "type": "string",
+                "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "precision": { "const": "day" } },
+            "required": ["precision"]
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "type": "string",
+                "format": "date",
+                "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-[0-9]{2}$"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "precision": { "const": "second" } },
+            "required": ["precision"]
+          },
+          "then": {
+            "properties": {
+              "value": { "type": "string", "format": "date-time" }
+            }
+          }
+        }
+      ]
+    },
+    "TemporalInterval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": {
+          "enum": ["known", "open_ended", "unknown", "not_applicable"]
+        },
+        "start": {
+          "$ref": "#/$defs/TemporalPoint"
+        },
+        "end": {
+          "$ref": "#/$defs/TemporalPoint"
+        },
+        "end_inclusive": {
+          "type": "boolean",
+          "default": false
+        },
+        "basis_assertion_ids": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/AssertionId" },
+          "uniqueItems": true
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "status": { "const": "known" } },
+            "required": ["status"]
+          },
+          "then": {
+            "required": ["start", "end", "end_inclusive"],
+            "properties": {
+              "start": {
+                "properties": {
+                  "status": { "enum": ["exact", "approximate"] }
+                }
+              },
+              "end": {
+                "properties": {
+                  "status": { "enum": ["exact", "approximate"] }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "status": { "const": "open_ended" } },
+            "required": ["status"]
+          },
+          "then": {
+            "required": ["start"],
+            "properties": {
+              "start": {
+                "properties": {
+                  "status": { "enum": ["exact", "approximate"] }
+                }
+              }
+            },
+            "not": { "required": ["end"] }
+          }
+        },
+        {
+          "if": {
+            "properties": { "status": { "enum": ["unknown", "not_applicable"] } },
+            "required": ["status"]
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                { "required": ["start"] },
+                { "required": ["end"] },
+                { "required": ["end_inclusive"] }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "TimeAxes": {
+      "type": "object",
+      "description": "Four clocks that must never be collapsed: issuer publication, legal effectiveness, facts-period applicability, and corpus observation.",
+      "additionalProperties": false,
+      "required": ["publication", "effectiveness", "applicability", "observation"],
+      "properties": {
+        "publication": {
+          "$ref": "#/$defs/TemporalPoint"
+        },
+        "effectiveness": {
+          "$ref": "#/$defs/TemporalInterval"
+        },
+        "applicability": {
+          "$ref": "#/$defs/TemporalInterval"
+        },
+        "observation": {
+          "$ref": "#/$defs/TemporalPoint"
+        }
+      }
+    },
+    "Locator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["locator_type", "value"],
+      "properties": {
+        "locator_type": {
+          "enum": [
+            "page",
+            "paragraph",
+            "section",
+            "line_range",
+            "byte_range",
+            "html_fragment",
+            "json_pointer",
+            "timestamp",
+            "other"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        }
+      }
+    },
+    "EvidenceCitation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "locator"],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "capture_id": {
+          "description": "The exact acquisition whose source provenance is being cited. Required semantically when the cited artifact is source-acquired rather than derived.",
+          "$ref": "#/$defs/CaptureId"
+        },
+        "locator": {
+          "$ref": "#/$defs/Locator"
+        },
+        "quoted_text": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "quoted_text_digest": {
+          "$ref": "#/$defs/ContentDigest"
+        },
+        "content_verification": {
+          "$ref": "#/$defs/ContentVerification"
+        },
+        "temporal_value_binding": {
+          "$ref": "#/$defs/TemporalValueBinding"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "anyOf": [
+              { "required": ["quoted_text"] },
+              { "required": ["quoted_text_digest"] }
+            ]
+          },
+          "then": {
+            "required": ["quoted_text_digest", "content_verification"]
+          }
+        }
+      ]
+    },
+    "ContentVerification": {
+      "type": "object",
+      "description": "An independent, digest-bound attestation that the exact cited quote digest occurs at the locator in the identified artifact and capture.",
+      "additionalProperties": false,
+      "required": [
+        "method",
+        "verified_at",
+        "verifier",
+        "verified_evidence_digest"
+      ],
+      "properties": {
+        "method": {
+          "enum": ["machine_exact_match", "human_visual_match"]
+        },
+        "verified_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "verifier": {
+          "allOf": [
+            { "$ref": "#/$defs/Producer" },
+            { "required": ["producer_id"] }
+          ]
+        },
+        "verified_evidence_digest": {
+          "description": "SHA-256 of the canonical artifact_id, optional capture_id, locator, quoted_text_digest, method, verified_at, and verifier projection.",
+          "$ref": "#/$defs/ContentDigest"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "method": { "const": "human_visual_match" } },
+            "required": ["method"]
+          },
+          "then": {
+            "properties": {
+              "verifier": {
+                "properties": { "producer_type": { "const": "human" } }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "TemporalValueBinding": {
+      "type": "object",
+      "description": "Reviewable proof connecting an exact source expression to a normalized temporal value.",
+      "additionalProperties": false,
+      "required": [
+        "source_value",
+        "normalized_value",
+        "method",
+        "producer",
+        "created_at"
+      ],
+      "properties": {
+        "source_value": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "normalized_value": {
+          "$ref": "#/$defs/NormalizedTemporalValue"
+        },
+        "method": {
+          "enum": ["source_exact", "deterministic_conversion", "human_reviewed"]
+        },
+        "settings_artifact_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "producer": {
+          "$ref": "#/$defs/Producer"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "reviewed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "reviewer": {
+          "$ref": "#/$defs/Producer"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "method": { "const": "source_exact" } },
+            "required": ["method"]
+          },
+          "then": {
+            "properties": { "producer": { "required": ["producer_id"] } },
+            "not": { "required": ["settings_artifact_id"] }
+          }
+        },
+        {
+          "if": {
+            "properties": { "method": { "const": "deterministic_conversion" } },
+            "required": ["method"]
+          },
+          "then": {
+            "required": ["settings_artifact_id"],
+            "properties": { "producer": { "required": ["producer_id"] } }
+          }
+        },
+        {
+          "if": {
+            "properties": { "method": { "const": "human_reviewed" } },
+            "required": ["method"]
+          },
+          "then": {
+            "required": ["reviewed_at", "reviewer"],
+            "properties": {
+              "producer": { "required": ["producer_id"] },
+              "reviewer": {
+                "required": ["producer_id"],
+                "properties": { "producer_type": { "const": "human" } }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "anyOf": [
+              { "required": ["reviewed_at"] },
+              { "required": ["reviewer"] }
+            ]
+          },
+          "then": {
+            "required": ["reviewed_at", "reviewer"],
+            "properties": {
+              "reviewer": {
+                "required": ["producer_id"],
+                "properties": { "producer_type": { "const": "human" } }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ReviewState": {
+      "enum": ["candidate", "verified", "disputed", "superseded", "retracted"]
+    },
+    "SourcedName": {
+      "type": "object",
+      "description": "A time-scoped name claim supported by an immutable citation. Official is a source claim, not a designation by Trace the Law.",
+      "additionalProperties": false,
+      "required": [
+        "text",
+        "language",
+        "name_type",
+        "valid_during",
+        "status",
+        "evidence",
+        "field_bindings",
+        "producer",
+        "created_at"
+      ],
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "language": {
+          "$ref": "#/$defs/LanguageTag"
+        },
+        "name_type": {
+          "enum": [
+            "official",
+            "official_short",
+            "former_official",
+            "alternative",
+            "translated",
+            "transliterated"
+          ]
+        },
+        "valid_during": {
+          "$ref": "#/$defs/TemporalInterval"
+        },
+        "status": {
+          "$ref": "#/$defs/ReviewState"
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/EvidenceCitation" }
+        },
+        "field_bindings": {
+          "description": "Complete field-level provenance for the name text, language, type, and validity interval.",
+          "type": "array",
+          "minItems": 4,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/SourcedNameFieldBinding" }
+        },
+        "producer": {
+          "$ref": "#/$defs/Producer"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "reviewed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "reviewer": {
+          "$ref": "#/$defs/Producer"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": { "enum": ["verified", "disputed", "superseded", "retracted"] }
+            },
+            "required": ["status"]
+          },
+          "then": {
+            "required": ["reviewed_at", "reviewer"],
+            "properties": {
+              "producer": { "required": ["producer_id"] },
+              "reviewer": { "required": ["producer_id"] }
+            }
+          }
+        }
+      ]
+    },
+    "ProfileFieldBinding": {
+      "type": "object",
+      "description": "A field-level mapping from selected profile evidence to the exact stored value. Non-source-exact mappings require independent human review bound to this complete object.",
+      "additionalProperties": false,
+      "required": [
+        "field",
+        "source_value",
+        "normalized_value",
+        "evidence_indexes",
+        "method",
+        "producer",
+        "created_at"
+      ],
+      "properties": {
+        "field": {
+          "enum": [
+            "authority_kind",
+            "branch",
+            "jurisdiction_kind",
+            "lifecycle_status",
+            "text",
+            "language",
+            "name_type",
+            "valid_during"
+          ]
+        },
+        "branch_index": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "source_value": {
+          "description": "Exact whole-field source-language value in one selected evidence quote.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "normalized_value": {},
+        "evidence_indexes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "integer", "minimum": 0 }
+        },
+        "method": {
+          "enum": ["source_exact", "human_reviewed"]
+        },
+        "producer": {
+          "$ref": "#/$defs/Producer"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "normalization_review": {
+          "$ref": "#/$defs/ProfileNormalizationReview"
+        }
+      },
+      "allOf": [
+        {
+          "properties": {
+            "producer": { "required": ["producer_id"] }
+          }
+        },
+        {
+          "if": {
+            "properties": { "field": { "const": "branch" } },
+            "required": ["field"]
+          },
+          "then": { "required": ["branch_index"] },
+          "else": { "not": { "required": ["branch_index"] } }
+        },
+        {
+          "if": {
+            "properties": { "method": { "const": "source_exact" } },
+            "required": ["method"]
+          },
+          "then": { "not": { "required": ["normalization_review"] } },
+          "else": { "required": ["normalization_review"] }
+        },
+        {
+          "if": {
+            "properties": { "field": { "const": "branch" } },
+            "required": ["field"]
+          },
+          "then": {
+            "properties": {
+              "normalized_value": {
+                "enum": [
+                  "legislative",
+                  "executive",
+                  "judicial",
+                  "independent",
+                  "intergovernmental",
+                  "traditional",
+                  "other",
+                  "unknown"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "field": { "const": "lifecycle_status" } },
+            "required": ["field"]
+          },
+          "then": {
+            "properties": {
+              "normalized_value": {
+                "enum": ["active", "historical", "reorganised", "abolished", "unknown"]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "field": { "const": "text" } },
+            "required": ["field"]
+          },
+          "then": {
+            "properties": {
+              "normalized_value": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "field": { "const": "language" } },
+            "required": ["field"]
+          },
+          "then": {
+            "properties": {
+              "normalized_value": { "$ref": "#/$defs/LanguageTag" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "field": { "const": "name_type" } },
+            "required": ["field"]
+          },
+          "then": {
+            "properties": {
+              "normalized_value": {
+                "enum": [
+                  "official",
+                  "official_short",
+                  "former_official",
+                  "alternative",
+                  "translated",
+                  "transliterated"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "field": { "const": "valid_during" } },
+            "required": ["field"]
+          },
+          "then": {
+            "properties": {
+              "normalized_value": { "$ref": "#/$defs/TemporalInterval" }
+            }
+          }
+        }
+      ]
+    },
+    "SourcedNameFieldBinding": {
+      "allOf": [
+        { "$ref": "#/$defs/ProfileFieldBinding" },
+        {
+          "properties": {
+            "field": {
+              "enum": ["text", "language", "name_type", "valid_during"]
+            }
+          },
+          "not": { "required": ["branch_index"] }
+        },
+        {
+          "if": {
+            "properties": { "field": { "const": "text" } },
+            "required": ["field"]
+          },
+          "then": {
+            "properties": { "method": { "const": "source_exact" } }
+          }
+        }
+      ]
+    },
+    "ProfileNormalizationReview": {
+      "type": "object",
+      "description": "Independent human approval bound to the exact source-to-profile-value mapping, producer, reviewer, and review time.",
+      "additionalProperties": false,
+      "required": ["reviewed_binding_digest", "reviewed_at", "reviewer"],
+      "properties": {
+        "reviewed_binding_digest": {
+          "description": "SHA-256 of the canonical complete field binding excluding only this digest field.",
+          "$ref": "#/$defs/ContentDigest"
+        },
+        "reviewed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "reviewer": {
+          "allOf": [
+            { "$ref": "#/$defs/Producer" },
+            {
+              "required": ["producer_id"],
+              "properties": { "producer_type": { "const": "human" } }
+            }
+          ]
+        }
+      }
+    },
+    "PublicSourceEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["official_url", "retrieved_at", "official_status"],
+      "properties": {
+        "official_url": {
+          "$ref": "#/$defs/PublicUrl"
+        },
+        "retrieved_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "official_status": {
+          "enum": ["verified_official", "claimed_official", "trusted_archive", "secondary_locator"]
+        },
+        "content_digest": {
+          "$ref": "#/$defs/ContentDigest"
+        },
+        "locator": {
+          "$ref": "#/$defs/Locator"
+        },
+        "public_excerpt": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "excerpt_digest": {
+          "$ref": "#/$defs/ContentDigest"
+        }
+      }
+    },
+    "ExternalIdentifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["namespace", "value"],
+      "properties": {
+        "namespace": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9._-]{1,63}$"
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        }
+      }
+    },
+    "Producer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["producer_type", "name"],
+      "properties": {
+        "producer_id": {
+          "type": "string",
+          "description": "Stable reviewer or producer identity used to prevent self-approval; display names are not sufficient for reviewed decisions.",
+          "pattern": "^urn:trace-the-law:producer:[a-z0-9][a-z0-9._:-]{1,160}$"
+        },
+        "producer_type": {
+          "enum": ["agent", "human", "importer", "source_monitor"]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "version": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "method": {
+          "type": "string",
+          "maxLength": 160
+        }
+      }
+    },
+    "ReviewTarget": {
+      "type": "object",
+      "description": "The exact entity, bytes, and route to which a reviewed decision applies.",
+      "additionalProperties": false,
+      "required": ["entity"],
+      "properties": {
+        "entity": { "$ref": "#/$defs/EntityRef" },
+        "content_digest": { "$ref": "#/$defs/ContentDigest" },
+        "source_url": { "$ref": "#/$defs/PublicUrl" }
+      }
+    },
+    "PublicationClearance": {
+      "type": "object",
+      "description": "A privacy, sealing, redaction, and sensitive-material gate independent of copyright or reuse rights.",
+      "additionalProperties": false,
+      "required": ["status", "checks", "review_state"],
+      "properties": {
+        "status": {
+          "enum": ["not_reviewed", "cleared", "restricted", "quarantined"]
+        },
+        "checks": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "personal_data",
+            "sealing_or_reporting_restrictions",
+            "official_redactions_preserved",
+            "sensitive_material"
+          ],
+          "properties": {
+            "personal_data": { "$ref": "#/$defs/ClearanceCheckState" },
+            "sealing_or_reporting_restrictions": {
+              "$ref": "#/$defs/ClearanceCheckState"
+            },
+            "official_redactions_preserved": {
+              "$ref": "#/$defs/ClearanceCheckState"
+            },
+            "sensitive_material": { "$ref": "#/$defs/ClearanceCheckState" }
+          }
+        },
+        "review_state": {
+          "enum": [
+            "unreviewed",
+            "machine_scanned",
+            "human_reviewed",
+            "specialist_reviewed",
+            "disputed"
+          ]
+        },
+        "reviewed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "reviewer": {
+          "$ref": "#/$defs/Producer"
+        },
+        "reviewed_clearance_digest": {
+          "description": "SHA-256 of the canonical complete publication-clearance decision excluding only this digest field.",
+          "$ref": "#/$defs/ContentDigest"
+        },
+        "reviewed_target": {
+          "$ref": "#/$defs/ReviewTarget"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "status": { "const": "not_reviewed" } },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "review_state": { "enum": ["unreviewed", "machine_scanned"] }
+            },
+            "not": {
+              "anyOf": [
+                { "required": ["reviewed_at"] },
+                { "required": ["reviewer"] }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": { "enum": ["cleared", "restricted", "quarantined"] }
+            },
+            "required": ["status"]
+          },
+          "then": {
+            "required": ["reviewed_at", "reviewer", "reviewed_clearance_digest", "reviewed_target"],
+            "properties": {
+              "review_state": {
+                "enum": ["human_reviewed", "specialist_reviewed", "disputed"]
+              },
+              "reviewer": {
+                "required": ["producer_id"],
+                "properties": { "producer_type": { "const": "human" } }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "status": { "const": "cleared" } },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "review_state": {
+                "enum": ["human_reviewed", "specialist_reviewed"]
+              },
+              "checks": {
+                "properties": {
+                  "personal_data": {
+                    "enum": ["not_present", "cleared", "not_applicable"]
+                  },
+                  "sealing_or_reporting_restrictions": {
+                    "enum": ["not_present", "cleared", "not_applicable"]
+                  },
+                  "official_redactions_preserved": {
+                    "enum": ["preserved", "not_applicable"]
+                  },
+                  "sensitive_material": {
+                    "enum": ["not_present", "cleared", "not_applicable"]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ClearanceCheckState": {
+      "enum": [
+        "not_present",
+        "preserved",
+        "cleared",
+        "concern",
+        "unknown",
+        "not_applicable"
+      ]
+    },
+    "RightsAssessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "publisher",
+        "status",
+        "evidence_retrieved_at",
+        "basis_evidence",
+        "permitted_uses",
+        "review_state"
+      ],
+      "properties": {
+        "publisher": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "rights_holder": {
+          "type": "string",
+          "maxLength": 240
+        },
+        "status": {
+          "enum": [
+            "open-license",
+            "public-domain",
+            "statutory-exception",
+            "permission",
+            "restricted",
+            "unknown"
+          ]
+        },
+        "terms_url": {
+          "$ref": "#/$defs/PublicUrl"
+        },
+        "license_url": {
+          "$ref": "#/$defs/PublicUrl"
+        },
+        "license_name": {
+          "type": "string",
+          "maxLength": 160
+        },
+        "license_version": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "license_jurisdiction": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "legal_basis": {
+          "type": "string",
+          "description": "Jurisdiction-specific public-domain or statutory-exception basis reviewed for this source route.",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "permission_reference": {
+          "type": "string",
+          "description": "Public, non-secret reference identifying the recorded permission.",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "evidence_retrieved_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "basis_evidence": {
+          "type": "array",
+          "description": "Public evidence for the rights assessment, including what was checked when status is unknown.",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/PublicSourceEvidence" }
+        },
+        "permitted_uses": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "capture",
+            "public_mirroring",
+            "transcription",
+            "translation",
+            "summarisation",
+            "redistribution"
+          ],
+          "properties": {
+            "capture": { "$ref": "#/$defs/RightsUseStatus" },
+            "public_mirroring": { "$ref": "#/$defs/RightsUseStatus" },
+            "transcription": { "$ref": "#/$defs/RightsUseStatus" },
+            "translation": { "$ref": "#/$defs/RightsUseStatus" },
+            "summarisation": { "$ref": "#/$defs/RightsUseStatus" },
+            "redistribution": { "$ref": "#/$defs/RightsUseStatus" }
+          }
+        },
+        "attribution": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "exclusions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 240
+          },
+          "uniqueItems": true
+        },
+        "review_state": {
+          "enum": ["unreviewed", "machine_extracted", "human_reviewed", "counsel_reviewed", "disputed"]
+        },
+        "reviewed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "reviewer": {
+          "$ref": "#/$defs/Producer"
+        },
+        "reviewed_assessment_digest": {
+          "description": "SHA-256 of the canonical complete rights assessment excluding only this digest field.",
+          "$ref": "#/$defs/ContentDigest"
+        },
+        "reviewed_target": {
+          "$ref": "#/$defs/ReviewTarget"
+        },
+        "next_review_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "next_review_trigger": {
+          "type": "string",
+          "maxLength": 240
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "status": { "const": "public-domain" } },
+            "required": ["status"]
+          },
+          "then": { "required": ["legal_basis", "terms_url"] }
+        },
+        {
+          "if": {
+            "properties": { "status": { "const": "statutory-exception" } },
+            "required": ["status"]
+          },
+          "then": { "required": ["legal_basis", "terms_url"] }
+        },
+        {
+          "if": {
+            "properties": { "status": { "const": "permission" } },
+            "required": ["status"]
+          },
+          "then": {
+            "required": ["rights_holder", "permission_reference", "terms_url"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "review_state": {
+                "enum": ["human_reviewed", "counsel_reviewed", "disputed"]
+              }
+            },
+            "required": ["review_state"]
+          },
+          "then": {
+            "required": ["reviewed_at", "reviewer", "reviewed_assessment_digest", "reviewed_target"],
+            "properties": {
+              "reviewer": {
+                "required": ["producer_id"],
+                "properties": { "producer_type": { "const": "human" } }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "review_state": {
+                "enum": ["unreviewed", "machine_extracted"]
+              }
+            },
+            "required": ["review_state"]
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                { "required": ["reviewed_at"] },
+                { "required": ["reviewer"] }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "RightsUseStatus": {
+      "enum": ["permitted", "prohibited", "unknown", "review_required"]
+    }
+  }
+}

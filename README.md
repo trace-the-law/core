@@ -1,4 +1,8 @@
-# Trace the Law
+<p align="center">
+  <img src="assets/brand/trace-the-law-icon.png" alt="Trace the Law logo" width="144">
+</p>
+
+<h1 align="center">Trace the Law</h1>
 
 **Open, versioned evidence for what governs us.**
 
@@ -66,6 +70,7 @@ See [the correction loop](docs/correction-loop.md) and
 ## Repository layout
 
 ```text
+assets/brand/             Logo masters and web icon exports
 docs/                    Architecture and public contracts
 examples/                Small examples; disabled future flows end in .template
 pilots/                  Bounded implementation plans
